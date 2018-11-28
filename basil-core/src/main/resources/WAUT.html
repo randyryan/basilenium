@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+    <title>Basil</title>
+  </head>
+  <body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <div class="jumbotron">
+      <h1 class="display-3">Basil</h1>
+      <p class="lead">Your solution to Selenium WebDriver tests with Java.</p>
+      <hr class="my-4">
+      <p>Provides many new mechanisms, tweaks, and what's missing to out-of-box Selenium, you only use parts that you need.</p>
+      <p class="lead">
+        <a class="btn btn-dark" href="https://github.com/randyryan" role="button">Find me on GitHub</a>
+        <a class="btn btn-dark" href="https://github.com/collections/machine-learning" role="button">Collection: Getting started with machine learning</a>
+        <button type="button" class="btn btn-primary" test="" disabled="">I'm disabled and you can't do a thing about me!</button>
+     </p>
+    </div>
+
+    <div class="container">
+
+      <nav>
+        <div class="nav nav-tabs nav-light" id="nav-tab" role="tablist">
+          <a class="nav-item nav-link active" id="nav-intervals-tab" data-toggle="tab" href="#nav-intervals" role="tab" aria-controls="nav-intervals" aria-selected="true">Intervals</a>
+          <a class="nav-item nav-link" id="nav-chord-tab" data-toggle="tab" href="#nav-chord" role="tab" aria-controls="nav-chord" aria-selected="false">Chord</a>
+          <a class="nav-item nav-link" id="nav-scale-tab" data-toggle="tab" href="#nav-scale" role="tab" aria-controls="nav-scale" aria-selected="false">Scale</a>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-intervals" role="tabpanel" aria-labelledby="nav-intervals-tab">
+          <table class="table table-hover table-light">
+            <thead>
+              <!-- tr>
+                <th colspan="6">Intervals</th>
+              </tr -->
+              <tr>
+                <th>Semitones</th>
+                <th>Name</th>
+                <th>Short</th>
+                <th>Augmented</th>
+                <th>Diminished</th>
+                <th>Short</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td>
+                <td>Perfect unison</td>
+                <td>P1</td>
+                <td></td>
+                <td>Diminished second</td>
+                <td>d2</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>Minor second</td>
+                <td>m2</td>
+                <td>Augmented unison</td>
+                <td></td>
+                <td>A1</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Major second</td>
+                <td>M2</td>
+                <td></td>
+                <td>Diminished third</td>
+                <td>d3</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Minor third</td>
+                <td>m3</td>
+                <td>Augmented second</td>
+                <td></td>
+                <td>A2</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Major third</td>
+                <td>M3</td>
+                <td></td>
+                <td>Diminished fourth</td>
+                <td>d4</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Perfect fourth</td>
+                <td>P4</td>
+                <td>Augmented third</td>
+                <td></td>
+                <td>A3</td>
+              </tr>
+              <tr>
+                <td rowspan="2">6</td>
+                <td rowspan="2"></td>
+                <td rowspan="2"></td>
+                <td></td>
+                <td>Diminished fifth</td>
+                <td>d5</td>
+              </tr>
+              <tr>
+                <td>Augmented fourth</td>
+                <td></td>
+                <td>A4</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Perfect fifth</td>
+                <td>P5</td>
+                <td></td>
+                <td>Diminished sixth</td>
+                <td>d6</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Minor sixth</td>
+                <td>m6</td>
+                <td>Augmented fifth</td>
+                <td></td>
+                <td>A5</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Major sixth</td>
+                <td>M6</td>
+                <td></td>
+                <td>Diminished seventh</td>
+                <td>d7</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>Minor seventh</td>
+                <td>m7</td>
+                <td>Augmented sixth</td>
+                <td></td>
+                <td>A6</td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>Major seventh</td>
+                <td>M7</td>
+                <td></td>
+                <td>Diminished octave</td>
+                <td>d8</td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>Perfect octave</td>
+                <td>P8</td>
+                <td>Augmented seventh</td>
+                <td></td>
+                <td>A7</td>
+              </tr>
+            </tbody>
+            <tfoot>
+            </tfoot>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="nav-chord" role="tabpanel" aria-labelledby="nav-chord-tab">
+          <table class="table table-hover table-light table-bordered">
+            <tbody>
+              <tr>
+                <th colspan="3" rowspan="3">Chord</th>
+                <th rowspan="2">Interval</th>
+                <th>P1</th>
+                <th>m2</th>
+                <th>M2</th>
+                <th>m3</th>
+                <th>M3</th>
+                <th>P4</th>
+                <th>TT</th>
+                <th>P5</th>
+                <th>m6</th>
+                <th>M6</th>
+                <th>m7</th>
+                <th>M7</th>
+              </tr>
+              <tr>
+                <th>d2</th>
+                <th>A1</th>
+                <th>d3</th>
+                <th>A2</th>
+                <th>d4</th>
+                <th>A3</th>
+                <th>d5/A4</th>
+                <th>d6</th>
+                <th>A5</th>
+                <th>d7</th>
+                <th>A6</th>
+                <th>d8</th>
+              </tr>
+              <tr>
+                <th>Semitones</th>
+                <th>0</th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>6</th>
+                <th>7</th>
+                <th>8</th>
+                <th>9</th>
+                <th>10</th>
+                <th>11</th>
+              </tr>
+              <tr>
+                <th>Short</th>
+                <th>Long</th>
+                <th>Name</th>
+                <th>Note in C</th>
+                <th>C</th>
+                <th>C<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-sharp">♯</span></span><br> D<span
+                  class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-flat">♭</span></span></th>
+                <th>D</th>
+                <th>D<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-sharp">♯</span></span><br> E<span
+                  class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-flat">♭</span></span></th>
+                <th>E</th>
+                <th>F</th>
+                <th>F<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-sharp">♯</span></span><br> G<span
+                  class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-flat">♭</span></span></th>
+                <th>G</th>
+                <th>G<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-sharp">♯</span></span><br> A<span
+                  class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-flat">♭</span></span></th>
+                <th>A</th>
+                <th>A<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-sharp">♯</span></span><br> B<span
+                  class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><span
+                    class="music-flat">♭</span></span></th>
+                <th>B</th>
+              </tr>
+              <tr>
+                <td>C</td>
+                <td></td>
+                <td colspan="2"><a href="/wiki/Major_triad"
+                  class="mw-redirect" title="Major triad">Major triad</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M3</td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>C<sup>6</sup><br> CM<sup>6</sup></td>
+                <td>Cmaj6</td>
+                <td colspan="2"><a href="/wiki/Major_sixth_chord"
+                  class="mw-redirect" title="Major sixth chord">Major sixth
+                    chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M3</td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td>M6</td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>C<sup>7</sup></td>
+                <td>Cdom7</td>
+                <td colspan="2"><a href="/wiki/Dominant_seventh_chord"
+                  title="Dominant seventh chord">Dominant seventh chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M3</td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td></td>
+                <td>m7</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>CM<sup>7</sup></td>
+                <td>Cmaj<sup>7</sup></td>
+                <td colspan="2"><a href="/wiki/Major_seventh_chord"
+                  title="Major seventh chord">Major seventh chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M3</td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M7</td>
+              </tr>
+              <tr>
+                <td>C+</td>
+                <td>Caug</td>
+                <td colspan="2"><a href="/wiki/Augmented_triad"
+                  title="Augmented triad">Augmented triad</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>A5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>C+<sup>7</sup></td>
+                <td>Caug<sup>7</sup></td>
+                <td colspan="2"><a href="/wiki/Augmented_seventh_chord"
+                  title="Augmented seventh chord">Augmented seventh chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>A5</td>
+                <td></td>
+                <td></td>
+                <td>M7</td>
+              </tr>
+              <tr>
+                <td>Cm</td>
+                <td>Cmin</td>
+                <td colspan="2"><a href="/wiki/Minor_triad"
+                  class="mw-redirect" title="Minor triad">Minor triad</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td>m3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Cm<sup>6</sup></td>
+                <td>Cmin<sup>6</sup></td>
+                <td colspan="2"><a href="/wiki/Minor_sixth_chord"
+                  class="mw-redirect" title="Minor sixth chord">Minor sixth
+                    chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td>m3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td>M6</td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Cm<sup>7</sup></td>
+                <td>Cmin<sup>7</sup></td>
+                <td colspan="2"><a href="/wiki/Minor_seventh_chord"
+                  title="Minor seventh chord">Minor seventh chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td>m3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td></td>
+                <td>m7</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Cm<sup>M7</sup><br> Cm/M7<br> Cm(M7)
+                </td>
+                <td>Cmin<sup>maj7</sup><br> Cmin/maj7<br>
+                  Cmin(maj7)
+                </td>
+                <td colspan="2"><a href="/wiki/Minor-major_seventh_chord"
+                  class="mw-redirect" title="Minor-major seventh chord">Minor-major
+                    seventh chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td>m3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>P5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>M7</td>
+              </tr>
+              <tr>
+                <td>C<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><sup>o</sup></span></td>
+                <td>Cdim</td>
+                <td colspan="2"><a href="/wiki/Diminished_triad"
+                  title="Diminished triad">Diminished triad</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td>m3</td>
+                <td></td>
+                <td></td>
+                <td>d5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>C<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><sup>o</sup></span><sup>7</sup></td>
+                <td>Cdim<sup>7</sup></td>
+                <td colspan="2"><a href="/wiki/Diminished_seventh_chord"
+                  title="Diminished seventh chord">Diminished seventh chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td>m3</td>
+                <td></td>
+                <td></td>
+                <td>d5</td>
+                <td></td>
+                <td></td>
+                <td>d7</td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>C<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><sup>ø</sup></span><br>
+                  C<span class="music-symbol"
+                  style="font-family: Arial Unicode MS, Lucida Sans Unicode;"><sup>ø</sup></span><sup>7</sup></td>
+                <td></td>
+                <td colspan="2"><a
+                  href="/wiki/Half-diminished_seventh_chord"
+                  title="Half-diminished seventh chord">Half-diminished
+                    seventh chord</a></td>
+                <td>P1</td>
+                <td></td>
+                <td></td>
+                <td>m3</td>
+                <td></td>
+                <td></td>
+                <td>d5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>m7</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="nav-scale" role="tabpanel" aria-labelledby="nav-scale-tab">
+          <table class="table table-hover table-light">
+            <thead>
+              <tr><th colspan="8">Mode</th></tr>
+              <tr>
+                <th>Mode</th>
+                <th>Prime</th>
+                <th>Second</th>
+                <th>Third</th>
+                <th>Fourth</th>
+                <th>Fifth</th>
+                <th>Sixth</th>
+                <th>Seventh</th>
+                <th>Octave</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ionian</td>
+                <td>P1</td><td>M2</td><td>M3</td><td>P4</td><td>P5</td><td>M6</td><td>M7</td><td>P8</td>
+              </tr>
+              <tr>
+                <td>Dorian</td>
+                <td>P1</td><td>M2</td><td>m3</td><td>P4</td><td>P5</td><td>M6</td><td>m7</td><td>P8</td>
+              </tr>
+              <tr>
+                <td>Phrygian</td>
+                <td>P1</td><td>m2</td><td>m3</td><td>P4</td><td>P5</td><td>m6</td><td>m7</td><td>P8</td>
+              </tr>
+              <tr>
+                <td>Lydian</td>
+                <td>P1</td><td>M2</td><td>M3</td><td>A4</td><td>P5</td><td>M6</td><td>M7</td><td>P8</td>
+              </tr>
+              <tr>
+                <td>Mixolydian</td>
+                <td>P1</td><td>M2</td><td>M3</td><td>P4</td><td>P5</td><td>M6</td><td>m7</td><td>P8</td>
+              </tr>
+              <tr>
+                <td>Aeolian</td>
+                <td>P1</td><td>M2</td><td>m3</td><td>P4</td><td>P5</td><td>m6</td><td>m7</td><td>P8</td>
+              </tr>
+              <tr>
+                <td>Locrian</td>
+                <td>P1</td><td>m2</td><td>m3</td><td>P4</td><td>d5</td><td>m6</td><td>m7</td><td>P8</td>
+              </tr>
+            </tbody>
+            <tfoot></tfoot>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="hierarchy_1">
+      <div id="hierarchy_2">
+        <div id="hierarchy_3">
+          <span id="hierarchy_4_1">
+            <span id="hierarchy_5">
+              <p id="hierarchy_6">Hierarchy</p>
+            </span>
+          </span>
+          <span id="hierarchy_4_2"></span>
+          <span id="hierarchy_4_3"></span>
+        </div>
+      </div>
+    </div>
+
+</body>
+
+</html>

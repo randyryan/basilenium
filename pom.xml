@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.basil</groupId>
+  <artifactId>basil-parent</artifactId>
+  <version>1.0</version>
+  <packaging>pom</packaging>
+
+  <name>Basil (parent)</name>
+  <description>Basil - a tiny solution to web test automation with Selenium WebDriver.</description>
+  <url>http://lamiaceae.io/ocimum</url>
+  <inceptionYear>2015</inceptionYear>
+
+  <developers>
+    <developer>
+      <name>Li Wan</name>
+      <id>ryan131</id>
+      <email>randyryan@gmail.com</email>
+      <organization>Independent developer</organization>
+      <timezone>+8</timezone>
+      <roles>
+        <role>owner</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>basil-core</module>
+	<module>basil-dojo</module>
+    <module>basil-test</module>
+  </modules>
+
+  <properties>
+    <java.version>1.8</java.version>
+    <guava.version>23.0</guava.version>
+    <slf4j.version>1.7.21</slf4j.version>
+    <junit.version>4.12</junit.version>
+    <testng.version>6.9.9</testng.version>
+    <spearmint.version>1.0</spearmint.version>
+    <selenium.version>2.53.1</selenium.version>
+    <encoding>UTF-8</encoding>
+    <project.build.sourceEncoding>${encoding}</project.build.sourceEncoding>
+    <project.build.resourceEncoding>${encoding}</project.build.resourceEncoding>
+    <project.reporting.outputEncoding>${encoding}</project.reporting.outputEncoding>
+    <wtp.version>none</wtp.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>6.9.9</version>
+      </dependency>
+      <dependency>
+        <groupId>org.spearmint</groupId>
+        <artifactId>spearmint</artifactId>
+        <version>${spearmint.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>${selenium.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+          <wtpversion>${wtp.version}</wtpversion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
