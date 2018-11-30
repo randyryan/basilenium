@@ -292,7 +292,7 @@ public class BasilWebDriver extends RemoteWebDriver implements WebDriver, Javasc
     if (element instanceof RemoteWebElement) {
       RemoteWebElement remoteElement = ((RemoteWebElement) element);
       String foundBy = String.format("[%s] -> %s: %s", context, by, using);
-      Spearmint.reflect(remoteElement).set("foundBy", foundBy);
+      Spearmint.reflect(remoteElement).field("foundBy").set(foundBy);
     }
   }
 

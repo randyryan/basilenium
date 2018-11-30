@@ -29,16 +29,17 @@ import org.openqa.selenium.safari.SafariDriver;
 class Driver {
 
   public static class Chrome {
-    public static DesiredCapabilities capabilities;
-    public static ChromeOptions options;
+//    public static DesiredCapabilities capabilities;
+//    public static ChromeOptions options;
+//
+//    static {
+//      capabilities = DesiredCapabilities.chrome();
+//      options = new ChromeOptions();
+//      capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+//    }
 
-    static {
-      capabilities = DesiredCapabilities.chrome();
-      options = new ChromeOptions();
-      capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-    }
-
-    public static WebDriver driver = new ChromeDriver(capabilities);
+//    public static WebDriver driver = new ChromeDriver(capabilities);
+    public static WebDriver driver = new ChromeDriver(DesiredCapabilities.chrome());
   }
 
   public static class Edge {

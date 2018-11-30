@@ -14,9 +14,9 @@ import org.basil.selenium.page.PageObject.TimerStyle;
 import org.basil.selenium.ui.ExtendedConditions.Precondition;
 import org.basil.selenium.ui.SearchContextWait.NotFound;
 import org.openqa.selenium.Dimension;
+import org.spearmint.base.Booleans;
 import org.spearmint.config.app.PropertyUtil;
 import org.spearmint.io.URLs;
-import org.spearmint.primitive.Booleans;
 
 /**
  * Basil configuration

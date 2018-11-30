@@ -9,8 +9,8 @@
   <packaging>pom</packaging>
 
   <name>Basil (parent)</name>
-  <description>Basil - a tiny solution to web test automation with Selenium WebDriver.</description>
-  <url>http://lamiaceae.io/ocimum</url>
+  <description>Basil is a test automation framework built with Selenium WebDriver.</description>
+  <url>https://github.com/randyryan/basil</url>
   <inceptionYear>2015</inceptionYear>
 
   <developers>
@@ -29,13 +29,13 @@
 
   <modules>
     <module>basil-core</module>
-	<module>basil-dojo</module>
+    <module>basil-dojo</module>
     <module>basil-test</module>
   </modules>
 
   <properties>
     <java.version>1.8</java.version>
-    <guava.version>23.0</guava.version>
+    <guava.version>22.0</guava.version>
     <slf4j.version>1.7.21</slf4j.version>
     <junit.version>4.12</junit.version>
     <testng.version>6.9.9</testng.version>

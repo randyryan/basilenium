@@ -168,6 +168,9 @@ public class BasilContext extends AbstractContext implements SearchContext {
 
     @Override
     public Basil getGenerated() {
+      if (resolve().resolutionAvoidance) {
+        
+      }
       if (generated == null) {
         String xpathExpression = null;
         if (context().isWebDriver()) {

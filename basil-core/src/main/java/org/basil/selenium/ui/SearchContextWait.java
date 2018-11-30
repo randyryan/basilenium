@@ -86,25 +86,25 @@ public class SearchContextWait extends FluentWait<SearchContext> {
       this.wait = wait;
     }
     T input() {
-      return Spearmint.reflect(wait).get("input");
+      return Spearmint.reflect(wait).field("input").get();
     }
     Clock clock() {
-      return Spearmint.reflect(wait).get("clock");
+      return Spearmint.reflect(wait).field("clock").get();
     }
     Sleeper sleeper() {
-      return Spearmint.reflect(wait).get("sleeper");
+      return Spearmint.reflect(wait).field("sleeper").get();
     }
     Duration timeout() {
-      return Spearmint.reflect(wait).get("timeout");
+      return Spearmint.reflect(wait).field("timeout").get();
     }
     Duration interval() {
-      return Spearmint.reflect(wait).get("interval");
+      return Spearmint.reflect(wait).field("interval").get();
     }
     Supplier<String> messageSupplier() {
-      return Spearmint.reflect(wait).get("messageSupplier");
+      return Spearmint.reflect(wait).field("messageSupplier").get();
     }
     List<Class<? extends Throwable>> ignoredExceptions() {
-      return Spearmint.reflect(wait).get("ignoredExceptions");
+      return Spearmint.reflect(wait).field("ignoredExceptions").get();
     }
     static <T> FluentWaitAdapter<T> adapt(FluentWait<T> wait) {
       return new FluentWaitAdapter<T>(wait);

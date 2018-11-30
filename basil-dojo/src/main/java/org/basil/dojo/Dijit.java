@@ -24,7 +24,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.spearmint.time.Sleeper;
+import org.spearmint.util.Sleeper;
 
 import com.google.common.collect.Lists;
 
