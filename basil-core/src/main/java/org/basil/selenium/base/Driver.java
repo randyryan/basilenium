@@ -17,7 +17,6 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 /**
@@ -29,17 +28,16 @@ import org.openqa.selenium.safari.SafariDriver;
 class Driver {
 
   public static class Chrome {
-//    public static DesiredCapabilities capabilities;
-//    public static ChromeOptions options;
-//
-//    static {
-//      capabilities = DesiredCapabilities.chrome();
-//      options = new ChromeOptions();
-//      capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-//    }
+    public static DesiredCapabilities capabilities;
+    public static ChromeOptions options;
 
-//    public static WebDriver driver = new ChromeDriver(capabilities);
-    public static WebDriver driver = new ChromeDriver(DesiredCapabilities.chrome());
+    static {
+      capabilities = DesiredCapabilities.chrome();
+      options = new ChromeOptions();
+      capabilities.setCapability(ChromeOptions.CAPABILITY, options);
+    }
+
+    public static WebDriver driver = new ChromeDriver(capabilities);
   }
 
   public static class Edge {
@@ -94,7 +92,7 @@ class RemoteDriver {
     if (driver != null && !(driver instanceof BasilWebDriver.Reusable)) {
       return driver;
     }
-    driver = new RemoteWebDriver(remoteAddress, capabilities);
+    driver = new BasilWebDriver(remoteAddress, capabilities);
 
     return driver;
   }
