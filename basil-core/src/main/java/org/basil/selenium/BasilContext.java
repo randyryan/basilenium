@@ -179,9 +179,9 @@ public class BasilContext extends AbstractContext implements SearchContext {
         if (context().isWebElement()) {
           xpathExpression = XPathUtil.getXPath(context().toWebElement());
         }
-        if (BasilContext.this instanceof PageObject) {
-          if (!context().isResolved()) {
-            context().toBasilElement().resolve().resolve();
+        if (context().isPageObject()) {
+          if (!context().toPageObject().isInitialized()) {
+            context().toPageObject().resolve().resolve();
           }
           xpathExpression = XPathUtil.getXPath(context().toWebElement());
         }
@@ -321,12 +321,8 @@ public class BasilContext extends AbstractContext implements SearchContext {
 
     @Override
     public void resolve() {
-      if (context.isBasilElement()) {
-        context.toBasilElement().resolve().resolve();
-      } else {
-        throw new UnsupportedOperationException("Resolution is unsupported for the current " +
-            "context type: " + context.get());
-      }
+      Preconditions.checkArgument(context.isBasilElement(), "Resolution is supported for only BasilElements.");
+      context.toBasilElement().resolve().resolve();
     }
 
     @Override
@@ -337,7 +333,7 @@ public class BasilContext extends AbstractContext implements SearchContext {
     @Override
     public List<WebElement> findElements(By by) {
       if (resolutionAvoidance) {
-        return resolutionAvoidances(by);
+        return resolutionAvoidances(Basil.from(by));
       }
       // No resolve avoidance
       By unconcatenatedBy = by;
@@ -351,7 +347,7 @@ public class BasilContext extends AbstractContext implements SearchContext {
     @Override
     public BasilElement findElement(By by) {
       if (resolutionAvoidance) {
-        return resolutionAvoidance(by);
+        return resolutionAvoidance(Basil.from(by));
       }
       By unconcatenatedBy = by;
       if (Basil.from(by).isConfident()) {
@@ -366,23 +362,23 @@ public class BasilContext extends AbstractContext implements SearchContext {
 
     // Resolution avoidance
 
-    List<WebElement> resolutionAvoidances(By by) {
+    List<WebElement> resolutionAvoidances(Basil by) {
       // The same as no resolution avoidance
       By unconcantenatedBy = by;
-      if (Basil.from(by).hasXPath()) {
+      if (by.hasXPath()) {
         by = locator().getConfident().concat(by);
         return driver().findElements(by);
       }
       return context.get().findElements(unconcantenatedBy);
     }
 
-    BasilElement resolutionAvoidance(By by) {
-      By unconcatenatedBy = by;
-      if (Basil.from(by).isConfident()) {
+    BasilElement resolutionAvoidance(Basil by) {
+      Basil unconcatenatedBy = by;
+      if (by.isConfident()) {
         return BasilElement.create(driver(), by);
 //        return BasilElement.create(driver().findElement(by)).setParent(driver()).setLocator(by);
       }
-      if (Basil.from(by).hasXPath()) {
+      if (by.hasXPath()) {
         by = locator().get().concat(by);
         // Like find methods in BasilElement, locator().get().concat(by) isn't guaranteed to produce
         // a confident locator, for example, a table's locator may have become //div[@id='table_1']
@@ -391,7 +387,7 @@ public class BasilContext extends AbstractContext implements SearchContext {
         // is a confident locator. But when this context is the header, and if we are trying to locate
         // a header row, the produced locator is //table[@class='tableHeader']//tr[@class='headerRow']
         // which is not confident
-        if (Basil.from(by).isConfident()) {
+        if (by.isConfident()) {
           try {
             System.err.println("[BasilContext#findElement] " + by);
             return BasilElement.create(driver().findElement(by)).setParent(BasilContext.this).setLocator(unconcatenatedBy);

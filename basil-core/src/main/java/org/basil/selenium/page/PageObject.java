@@ -10,6 +10,7 @@ import org.basil.Config;
 import org.basil.selenium.Basil;
 import org.basil.selenium.BasilElement;
 import org.basil.selenium.base.DriverFactory;
+import org.basil.selenium.service.WebElementUtil;
 import org.basil.selenium.ui.ExtendedConditions;
 import org.basil.selenium.ui.Pessimistically;
 import org.openqa.selenium.By;
@@ -20,6 +21,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 /**
  * PageObject - the base class for writing Basil page objects.
@@ -71,24 +74,9 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
     this.timer = new Timer(getClass());
     this.lookup = ElementLookup.create(this, wait);
 
-    construct(context, locator);
-  }
-
-  protected PageObject(WebElement pageObject) {
-    this(pageObject, new Object[0]);
-  }
-
-  protected PageObject(WebElement pageObject, Object... params) {
-    this.wait = DriverFactory.getWebDriverWait();
-    this.params = params;
-
-    this.timer = new Timer(getClass());
-    this.lookup = ElementLookup.create(this);
-
-    this.pageObject = BasilElement.create(pageObject);
-    if (!initializeOnTheFly()) {
-      construct();
-    }
+    super.setLocator(locator);
+    super.setParent(context);
+    init();
   }
 
   protected PageObject() {
@@ -105,15 +93,10 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
 
   // Initialization mechanism
 
-  protected void construct(SearchContext context, By locator) {
-    super.setLocator(locator);
-    super.setParent(context);
-    if (!initializeOnTheFly()) {
-      construct();
-    }
-  }
-
-  protected void construct() {
+  /**
+   * The page object initializer.
+   */
+  protected void init() {
     timer.tokenBegin();
     initializePageObject();
     setContext(pageObject);
@@ -126,49 +109,23 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
     timer.printTimerMessage();
   }
 
-  public void initialize(SearchContext context, By locator) {
-    super.setLocator(locator);
-    super.setParent(context);
-    initialize();
-  }
-
-  public void initialize() {
-    if (initializeOnTheFly()) {
-      construct();
-    } else {
-      logger.error("[" + timer.name + "] external-initialization is not supported.");
-      throw new UnsupportedOperationException("external-initialization is not supported.");
-    }
-  }
-
-  public boolean isInitialized() {
-    return pageObject != null;
-  }
-
   /**
-   * Locate and WAIT for the PageObject to be VISIBLE.
+   * Locate and WAIT for the {@code pageObject} element to be VISIBLE.
    */
   protected void initializePageObject() {
-    if (pageObject != null) {
-      waitUntilVisible();
-      return;
-    }
-
     WebElement pageObject = null;
     ElementLookup lookup = ElementLookup.create(getParent(), PAGE_OBJECT_LOCATE_TIMEOUT);
     try {
-      Basil basil = getLocator();
-      if (basil.isConfident()) {
+      Basil by = getLocator();
+      if (by.isConfident()) {
         pageObject = lookup.getVisibleElement(getLocator());
       }
-      if (basil.hasXPath() && !getParent().isWebDriver()) {
-        // My locator's should not be the same as my parent's locator
-        if (basil.equals(getParent().getLocator()) ||
-            basil.equals(getParent().getConfidentLocator())) {
-          logger.warn("The locator \"" + basil + "\" is conflict with it's parent's locator.");
+      if (by.hasXPath() && !getParent().isWebDriver()) {
+        if (by.equals(getParent().getLocator()) || by.equals(getParent().getConfidentLocator())) {
+          logger.warn("The locator \"" + by + "\" is conflict with it's parent's locator.");
         }
-        if (!(basil.equals(getParent().getLocator())) &&
-            !(basil.equals(getParent().getConfidentLocator()) && locatorRegeneration())) {
+        if (!(by.equals(getParent().getLocator())) &&
+            !(by.equals(getParent().getConfidentLocator()) && locatorRegeneration())) {
           // If a confident locator is concatenated with another locator, it will not guarantee
           // that the concatenated locator is a confident locator. For example:
           //
@@ -178,11 +135,11 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
           //
           // The example above produced a locator that's not confident, therefore it's not safe
           // to use lookup.getVisibleElement().
-          pageObject = lookup.getFirstVisibleElement(getParent().getLocator().concat(basil));
+          pageObject = lookup.getFirstVisibleElement(getParent().getLocator().concat(by));
         }
       }
       if (pageObject == null) {
-        pageObject = lookup.getFirstVisibleElement(basil);
+        pageObject = lookup.getFirstVisibleElement(by);
       }
     } catch (TimeoutException te) {
       logger.error(getParent().toString());
@@ -197,6 +154,35 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
    */
   protected void initializeWebElements() {
     // Do nothing
+  }
+
+  /**
+   * Externally controlled initialization when the page object is initialized on-the-fly.
+   */
+  public void initialize() {
+    Preconditions.checkState(initializeOnTheFly(),
+        "The current page object \"" + getClassName() + "\" cannot be initialized externally.");
+    init();
+  }
+
+  public boolean isInitialized() {
+    return pageObject != null;
+  }
+
+  public boolean isEnabled() {
+    return WebElementUtil.isEnabled(pageObject);
+  }
+
+  public boolean isDisabled() {
+    return WebElementUtil.isDisabled(pageObject);
+  }
+
+  public void waitUntilVisible() {
+    wait.until(ExtendedConditions.visibilityOf(pageObject));
+  }
+
+  public void waitUntilInvisible() {
+    wait.until(ExtendedConditions.invisibilityOf(pageObject));
   }
 
   @SuppressWarnings("unchecked")
@@ -220,14 +206,6 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
 //    WebElementUtil.clickButton(button);
     Pessimistically.click(button);
     waitUntilInvisible();
-  }
-
-  public void waitUntilVisible() {
-    wait.until(ExtendedConditions.visibilityOf(pageObject));
-  }
-
-  public void waitUntilInvisible() {
-    wait.until(ExtendedConditions.invisibilityOf(pageObject));
   }
 
   private class Timer {
