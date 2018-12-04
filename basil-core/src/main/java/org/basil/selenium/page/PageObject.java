@@ -74,9 +74,24 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
     this.timer = new Timer(getClass());
     this.lookup = ElementLookup.create(this, wait);
 
-    super.setLocator(locator);
-    super.setParent(context);
-    init();
+    construct(context, locator);
+  }
+
+  protected PageObject(WebElement pageObject) {
+    this(pageObject, new Object[0]);
+  }
+
+  protected PageObject(WebElement pageObject, Object... params) {
+    this.wait = DriverFactory.getWebDriverWait();
+    this.params = params;
+
+    this.timer = new Timer(getClass());
+    this.lookup = ElementLookup.create(this);
+
+    this.pageObject = BasilElement.create(pageObject);
+    if (!initializeOnTheFly()) {
+      construct();
+    }
   }
 
   protected PageObject() {
@@ -93,10 +108,15 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
 
   // Initialization mechanism
 
-  /**
-   * The page object initializer.
-   */
-  protected void init() {
+  protected void construct(SearchContext context, By locator) {
+    super.setLocator(locator);
+    super.setParent(context);
+    if (!initializeOnTheFly()) {
+      construct();
+    }
+  }
+
+  protected void construct() {
     timer.tokenBegin();
     initializePageObject();
     setContext(pageObject);
@@ -109,23 +129,36 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
     timer.printTimerMessage();
   }
 
+  public void initialize(SearchContext context, By locator) {
+    super.setLocator(locator);
+    super.setParent(context);
+    initialize();
+  }
+
   /**
-   * Locate and WAIT for the {@code pageObject} element to be VISIBLE.
+   * Locate and WAIT for the PageObject to be VISIBLE.
    */
   protected void initializePageObject() {
+    if (pageObject != null) {
+      waitUntilVisible();
+      return;
+    }
+
     WebElement pageObject = null;
     ElementLookup lookup = ElementLookup.create(getParent(), PAGE_OBJECT_LOCATE_TIMEOUT);
     try {
-      Basil by = getLocator();
-      if (by.isConfident()) {
+      Basil basil = getLocator();
+      if (basil.isConfident()) {
         pageObject = lookup.getVisibleElement(getLocator());
       }
-      if (by.hasXPath() && !getParent().isWebDriver()) {
-        if (by.equals(getParent().getLocator()) || by.equals(getParent().getConfidentLocator())) {
-          logger.warn("The locator \"" + by + "\" is conflict with it's parent's locator.");
+      if (basil.hasXPath() && !getParent().isWebDriver()) {
+        // My locator's should not be the same as my parent's locator
+        if (basil.equals(getParent().getLocator()) ||
+            basil.equals(getParent().getConfidentLocator())) {
+          logger.warn("The locator \"" + basil + "\" is conflict with it's parent's locator.");
         }
-        if (!(by.equals(getParent().getLocator())) &&
-            !(by.equals(getParent().getConfidentLocator()) && locatorRegeneration())) {
+        if (!(basil.equals(getParent().getLocator())) &&
+            !(basil.equals(getParent().getConfidentLocator()) && locatorRegeneration())) {
           // If a confident locator is concatenated with another locator, it will not guarantee
           // that the concatenated locator is a confident locator. For example:
           //
@@ -135,11 +168,11 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
           //
           // The example above produced a locator that's not confident, therefore it's not safe
           // to use lookup.getVisibleElement().
-          pageObject = lookup.getFirstVisibleElement(getParent().getLocator().concat(by));
+          pageObject = lookup.getFirstVisibleElement(getParent().getLocator().concat(basil));
         }
       }
       if (pageObject == null) {
-        pageObject = lookup.getFirstVisibleElement(by);
+        pageObject = lookup.getFirstVisibleElement(basil);
       }
     } catch (TimeoutException te) {
       logger.error(getParent().toString());
@@ -162,7 +195,7 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
   public void initialize() {
     Preconditions.checkState(initializeOnTheFly(),
         "The current page object \"" + getClassName() + "\" cannot be initialized externally.");
-    init();
+    construct();
   }
 
   public boolean isInitialized() {

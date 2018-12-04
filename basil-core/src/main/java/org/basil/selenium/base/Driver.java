@@ -17,6 +17,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 /**
@@ -92,7 +93,7 @@ class RemoteDriver {
     if (driver != null && !(driver instanceof BasilWebDriver.Reusable)) {
       return driver;
     }
-    driver = new BasilWebDriver(remoteAddress, capabilities);
+    driver = new RemoteWebDriver(remoteAddress, capabilities);
 
     return driver;
   }
