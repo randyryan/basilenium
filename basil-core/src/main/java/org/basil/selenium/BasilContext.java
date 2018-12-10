@@ -142,6 +142,13 @@ public class BasilContext extends AbstractContext implements SearchContext {
         return locator;
       }
       logger.warn("[" + getClassName() + "] has null locator.");
+//      try {
+//        logger.warn("[" + getClassName() + "] has null locator.");
+//        locator.isConfident();
+//      } catch (NullPointerException npe) {
+//        npe.printStackTrace(System.err);
+//      }
+
       return locator = getConfident();
     }
 
@@ -241,6 +248,10 @@ public class BasilContext extends AbstractContext implements SearchContext {
         this.parent = (BasilContext) parent;
       } else {
         this.parent = BasilContext.create(parent);
+        if (parent instanceof WebDriver) {
+          return;
+        }
+        logger.warn("A raw parent is used, please use Basil-compatible parent whenever available.");
       }
     }
 
@@ -349,15 +360,17 @@ public class BasilContext extends AbstractContext implements SearchContext {
       if (resolutionAvoidance) {
         return resolutionAvoidance(Basil.from(by));
       }
+      // XXX Use setParent(BasilContext.this) whenever possible to prevent property loss due to
+      // creating the BasilContext from a parent that is raw, i.e. setParent(context().get());.
       By unconcatenatedBy = by;
       if (Basil.from(by).isConfident()) {
         return BasilElement.create(driver().findElement(by)).setParent(driver()).setLocator(by);
       }
       if (Basil.from(by).isByXPath()) {
         by = locator().getConfident().concat(by);
-        return BasilElement.create(driver().findElement(by)).setParent(context.get()).setLocator(unconcatenatedBy);
+        return BasilElement.create(driver().findElement(by)).setParent(BasilContext.this).setLocator(unconcatenatedBy);
       }
-      return BasilElement.create(context.get().findElement(by)).setParent(context.get()).setLocator(by);
+      return BasilElement.create(context.get().findElement(by)).setParent(BasilContext.this).setLocator(by);
     }
 
     // Resolution avoidance

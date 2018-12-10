@@ -8,11 +8,13 @@ import static org.basil.Config.Value.PAGE_OBJECT_LOCATE_TIMEOUT;
 
 import org.basil.Config;
 import org.basil.selenium.Basil;
+import org.basil.selenium.BasilContext;
 import org.basil.selenium.BasilElement;
 import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.service.WebElementUtil;
 import org.basil.selenium.ui.ExtendedConditions;
 import org.basil.selenium.ui.Pessimistically;
+import org.basil.selenium.ui.SearchContextWait;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
@@ -144,42 +146,42 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
       return;
     }
 
+    BasilContext parent = getParent();
+    Basil locator = getLocator();
     WebElement pageObject = null;
-    ElementLookup lookup = ElementLookup.create(getParent(), PAGE_OBJECT_LOCATE_TIMEOUT);
     try {
-      Basil basil = getLocator();
-      if (basil.isConfident()) {
+      ElementLookup lookup = ElementLookup.create(parent, PAGE_OBJECT_LOCATE_TIMEOUT);
+      if (locator.isConfident()) {
         pageObject = lookup.getVisibleElement(getLocator());
       }
-      if (basil.hasXPath() && !getParent().isWebDriver()) {
-        // My locator's should not be the same as my parent's locator
-        if (basil.equals(getParent().getLocator()) ||
-            basil.equals(getParent().getConfidentLocator())) {
-          logger.warn("The locator \"" + basil + "\" is conflict with it's parent's locator.");
+      if (locator.hasXPath() && !parent.isWebDriver()) {
+        if (locator.equals(parent.getLocator()) || locator.equals(parent.getConfidentLocator())) {
+          // My locator's should not be the same as my parent's locator
+          logger.error("The locator \"" + locator + "\" is conflict with it's parent's locator.");
         }
-        if (!(basil.equals(getParent().getLocator())) &&
-            !(basil.equals(getParent().getConfidentLocator()) && locatorRegeneration())) {
-          // If a confident locator is concatenated with another locator, it will not guarantee
-          // that the concatenated locator is a confident locator. For example:
+        if (!(locator.equals(parent.getLocator())) &&
+            !(locator.equals(parent.getConfidentLocator()) && locatorRegeneration())) {
+          // When a confident locator is concatenated with another locator, the concatenated
+          // locator is guaranteed to be is a confident locator. For example:
           //
           //     Confident locator: //table[@id='1']
           //     concatenated with: //tr
           //     resulted:          //table[@id='1']//tr
           //
-          // The example above produced a locator that's not confident, therefore it's not safe
-          // to use lookup.getVisibleElement().
-          pageObject = lookup.getFirstVisibleElement(getParent().getLocator().concat(basil));
+          // The locator produced in the example above is not confident.
+          pageObject = lookup.getFirstVisibleElement(locator); //Lookup already does prefix the
+          // locator so it is looking up using getParent().getConfidentLocator().concat(locator)
         }
       }
-      if (pageObject == null) {
-        pageObject = lookup.getFirstVisibleElement(basil);
+      if (pageObject == null) { // Fail-safe in case previous lookup did not work
+        pageObject = lookup.getFirstVisibleElement(locator);
       }
     } catch (TimeoutException te) {
       logger.error(getParent().toString());
       logger.error("PageObject has failed to initialize with locator: " + getLocator());
       throw new NoSuchElementException("Cannot locate page object by: " + getLocator());
     }
-    this.pageObject = BasilElement.create(pageObject).setParent(getParent());
+    this.pageObject = BasilElement.create(pageObject).setParent(parent).setLocator(getLocator());
   }
 
   /**
