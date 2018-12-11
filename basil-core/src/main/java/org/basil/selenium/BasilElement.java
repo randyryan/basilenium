@@ -124,44 +124,6 @@ public class BasilElement extends AbstractElement implements WebElement, WrapsEl
     return resolve;
   }
 
-  // Shorthand to attributes
-
-  public boolean hasAttribute(String attribute) {
-    return !Strings.isNullOrEmpty(getAttribute(attribute));
-  }
-
-  public String id() {
-    return getAttribute("id");
-  }
-
-  public boolean hasId() {
-    return hasAttribute("id");
-  }
-
-  public String clazz() {
-    return getAttribute("class");
-  }
-
-  public boolean hasClass(String className) {
-    return clazz().contains(className);
-  }
-
-  public String title() {
-    return getAttribute("title");
-  }
-
-  public boolean hasTitle() {
-    return hasAttribute("title");
-  }
-
-  public String value() {
-    return getAttribute("value");
-  }
-
-  public String innerHTML() {
-    return getAttribute("innerHTML");
-  }
-
   public class Resolve extends AbstractElement.Resolve {
 
     @Override

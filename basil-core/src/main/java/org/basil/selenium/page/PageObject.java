@@ -14,7 +14,6 @@ import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.service.WebElementUtil;
 import org.basil.selenium.ui.ExtendedConditions;
 import org.basil.selenium.ui.Pessimistically;
-import org.basil.selenium.ui.SearchContextWait;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
@@ -178,10 +177,10 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
       }
     } catch (TimeoutException te) {
       logger.error(getParent().toString());
-      logger.error("PageObject has failed to initialize with locator: " + getLocator());
-      throw new NoSuchElementException("Cannot locate page object by: " + getLocator());
+      logger.error("PageObject has failed to initialize with locator: " + locator);
+      throw new NoSuchElementException("Cannot locate page object by: " + locator);
     }
-    this.pageObject = BasilElement.create(pageObject).setParent(parent).setLocator(getLocator());
+    this.pageObject = BasilElement.create(pageObject).setParent(parent).setLocator(locator);
   }
 
   /**
@@ -304,7 +303,7 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
       long totalUsed = tokenUsed + elementUsed;
       StringBuilder message = new StringBuilder();
 
-      message.append(String.format("[%s @ %s] initialized", name, pageObject.id()));
+      message.append(String.format("[%s @ %s] initialized", name, pageObject.getId()));
       if (Config.Value.PAGE_OBJECT_TIMER_31S) {
         try {
           Thread.sleep(31);

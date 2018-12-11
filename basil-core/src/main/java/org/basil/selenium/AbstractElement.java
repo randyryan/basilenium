@@ -17,6 +17,8 @@ import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.internal.WrapsElement;
 
+import com.google.common.base.Strings;
+
 /**
  * AbstractElement
  *
@@ -132,6 +134,48 @@ public abstract class AbstractElement extends BasilContext implements WebElement
   @Override
   public String getCssValue(String propertyName) {
     return resolve().by(ResolveBy.getCssValue).getCssValue(propertyName);
+  }
+
+  // WebElement extension
+
+  public boolean hasAttribute(String attribute) {
+    return !Strings.isNullOrEmpty(getAttribute(attribute));
+  }
+
+  public String getId() {
+    return getAttribute("id");
+  }
+
+  public boolean hasId() {
+    return hasAttribute("id");
+  }
+
+  public String getClazz() {
+    return getAttribute("class");
+  }
+
+  public boolean hasClass(String className) {
+    String classNames = getClazz();
+    if (Strings.isNullOrEmpty(classNames)) {
+      return false;
+    }
+    return classNames.contains(className);
+  }
+
+  public String getTitle() {
+    return getAttribute("title");
+  }
+
+  public boolean hasTitle() {
+    return hasAttribute("title");
+  }
+
+  public String value() {
+    return getAttribute("value");
+  }
+
+  public String getInnerHTML() {
+    return getAttribute("innerHTML");
   }
 
   // Object
