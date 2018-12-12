@@ -141,14 +141,7 @@ public class BasilContext extends AbstractContext implements SearchContext {
       if (has()) {
         return locator;
       }
-      logger.warn("[" + getClassName() + "] has null locator.");
-//      try {
-//        logger.warn("[" + getClassName() + "] has null locator.");
-//        locator.isConfident();
-//      } catch (NullPointerException npe) {
-//        npe.printStackTrace(System.err);
-//      }
-
+      logger.warn("[" + getClassName() + "] has no locator. Fallback to confident/generated.");
       return locator = getConfident();
     }
 
@@ -163,7 +156,7 @@ public class BasilContext extends AbstractContext implements SearchContext {
         confident = locator;
       }
       if (confident == null) {
-        confident = getGenerated();
+        confident = getGenerated(false);
       }
       return confident;
     }
@@ -175,8 +168,31 @@ public class BasilContext extends AbstractContext implements SearchContext {
 
     @Override
     public Basil getGenerated() {
-      if (resolve().resolutionAvoidance) {
-        
+      if (isWebDriver()) {
+        return generated = Basil.xpath("");
+      }
+      return getGenerated(resolve.resolutionAvoidance);
+    }
+
+    Basil getGenerated(boolean resolutionAvoidance) {
+      if (resolutionAvoidance) {
+        BasilContext parent = getParent();
+        Basil locator = hasGenerated() ? generated : get();
+        while (!locator.isConfident()) {
+          // Concatenating the locator
+          if (parent.locator().hasGenerated()) {
+            locator = parent.getGeneratedLocator().concat(locator);
+          } else if (parent.locator().hasConfident()) {
+            locator = parent.getConfidentLocator().concat(locator);
+          } else {
+            locator = parent.getLocator().concat(locator);
+          }
+          parent = parent.getParent();
+          if (parent.isWebDriver()) {
+            break;
+          }
+        }
+        return generated = locator;
       }
       if (generated == null) {
         String xpathExpression = null;
@@ -328,7 +344,7 @@ public class BasilContext extends AbstractContext implements SearchContext {
     /**
      * Flag for resolution avoidance
      */
-    protected final boolean resolutionAvoidance = false;
+    protected final boolean resolutionAvoidance = true;
 
     @Override
     public void resolve() {
@@ -385,37 +401,48 @@ public class BasilContext extends AbstractContext implements SearchContext {
       return context.get().findElements(unconcantenatedBy);
     }
 
+    /**
+     * Resolution Avoidance strategy
+     *
+     * 1) If the locator is confident, ignore the parent context and looking it up directly in the
+     *    driver. This avoids resolution of the parent, but it should set/accept the parent as the
+     *    parent context rather than the driver.
+     * 2) If the locator is not confident, 
+     */
     BasilElement resolutionAvoidance(Basil by) {
-      Basil unconcatenatedBy = by;
       if (by.isConfident()) {
         return BasilElement.create(driver(), by);
-//        return BasilElement.create(driver().findElement(by)).setParent(driver()).setLocator(by);
       }
-      if (by.hasXPath()) {
-        by = locator().get().concat(by);
-        // Like find methods in BasilElement, locator().get().concat(by) isn't guaranteed to produce
-        // a confident locator, for example, a table's locator may have become //div[@id='table_1']
-        // when this context is the table and we're locating the header //table[@class='tableHeader']
-        // it's fine, because the produced locator //div[@id='table_1']//table[@class='tableHeader']
-        // is a confident locator. But when this context is the header, and if we are trying to locate
-        // a header row, the produced locator is //table[@class='tableHeader']//tr[@class='headerRow']
-        // which is not confident
-        if (by.isConfident()) {
-          try {
-            System.err.println("[BasilContext#findElement] " + by);
-            return BasilElement.create(driver().findElement(by)).setParent(BasilContext.this).setLocator(unconcatenatedBy);
-          } catch (org.openqa.selenium.NoSuchElementException nsee) {
-            System.err.println("[BasilContext#findElement] The concantenated locator is illegal.");
-            System.err.println("[BasilContext#findElement] This context is: " + locator().get());
-            System.err.println("[BasilContext#findElement] Incoming by: " + unconcatenatedBy);
-            System.err.println("[BasilContext#findElement] Produced by: " + by);
-          }
-        }
-      } else {
-        return BasilElement.create(driver().findElement(by)).setParent(BasilContext.this).setLocator(by);
+      if (!by.hasXPath()) {
+        // Investigate if BasilElement.create(BasilContext.this, by); is better.
+        return BasilElement.create(getContext().findElement(by)).setParent(BasilContext.this).setLocator(by);
+      }
+
+      Basil unconcatenatedBy = by;
+      // Concatenating the locator
+      if (context().isResolved() && !locator().hasGenerated()) {
+        // Yes, this is a possibility, and yes, this needs to be remedied. Why is this parent
+        // that's initialized but has not generated locator? Because it's been out-smarted by
+        // resolution avoidance.
+        locator().getGenerated(false);
+      }
+      if (locator().hasGenerated()) {
+        by = getGeneratedLocator().concat(by);
+      } else if (locator().hasConfident()) {
+        by = getConfidentLocator().concat(by);
+      }
+      // Note: getLocator().concat(by) isn't guaranteed to be confident. For example, When the
+      // current context is a table with locator //div[@id='table_1'], when locating the header
+      // like //table[@class='tableHeader'] it maybe fine, the getLocator().concat(by) produced
+      // //div[@id='table_1']//table[@class='tableHeader'] accurate-ish. But when the context
+      // is the header, and we locating a header row, the produced locator is
+      // //table[@class='tableHeader']//tr[@class='headerRow'] may result the row from other
+      // table to be located.
+      if (by.isConfident()) {
+        return BasilElement.create(driver().findElement(by)).setParent(BasilContext.this).setLocator(unconcatenatedBy);
       }
       by = unconcatenatedBy;
-      return BasilElement.create(context.get().findElement(by)).setParent(BasilContext.this).setLocator(by);
+      return BasilElement.create(getContext().findElement(by)).setParent(BasilContext.this).setLocator(by);
     }
 
   }

@@ -22,6 +22,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.internal.Coordinates;
 import org.openqa.selenium.internal.Locatable;
 import org.openqa.selenium.internal.WrapsElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -69,6 +71,8 @@ public class BasilElement extends AbstractElement implements WebElement, WrapsEl
   public static BasilElement create(WebElement element) {
     return new BasilElement(element);
   }
+
+  private static final Logger logger = LoggerFactory.getLogger(BasilElement.class);
 
   private Resolve resolve;
 
@@ -144,98 +148,31 @@ public class BasilElement extends AbstractElement implements WebElement, WrapsEl
     protected WebElement by(AbstractElement.ResolveBy by) {
       this.by = by;
       if (!isResolved()) {
-        BasilElement resolvedElement = null;
-        if (from == ResolveFrom.LABEL && !Strings.isNullOrEmpty(label)) {
+        BasilElement element = null;
+        if (from == ResolveFrom.LABEL && !Strings.isNullOrEmpty(label)) { // Convert label to ById
           setLocator(By.id(findElementByText(label, getParent()).getAttribute("for")));
         }
-        if (from != ResolveFrom.ELEMENT) {
-          if (getLocator().hasXPath()) {
-            resolvedElement = getParent().findElement(getLocator().toByXPath());
-          } else {
-            resolvedElement = getParent().findElement(getLocator());
-          }
+        if (getLocator().hasXPath()) {
+          element = getParent().findElement(getLocator().toByXPath());
+        } else {
+          element = getParent().findElement(getLocator());
         }
-        // This method must guarantee that the setContext() method sets the context in BasilContext
-        // successfully, therefore we should always pass a WebElement into setContext. Because:
-        //
-        // 1) The context of BasilElement "resolvedElement" is null
-        // 2) The setContext() method treats "resolvedElement" as a BasilContext, it copies the null
-        // 3) The invoke of this method indicates that this is an actual use of the element rather
-        //    than the optimized find-element, this also indicates that the element is at the bottom
-        //    of the element.findElement() chain; This BasilElement now should contain a valid
-        //    context rather than a unresolved BasilElement to only serves as a context (chaining)
-        //
-        // Based on the investigation, please pay attention to the comments:
-        if (resolvedElement != null) {
-          if (resolvedElement.isResolved()) {
-            setContext(resolvedElement); // Although logical, but this line may never be used.
-            System.err.println("setContext(resolvedElement) is invoked!");
+        // This method must guarantee to set the context successfully, so the element must be a
+        // resolved one, otherwise setContext will sets the context to null.
+        if (element != null) {
+          if (element.isResolved()) {
+            setContext(element);
           } else {
-            setContext(driver().findElement(getLocator())); // We should believe that the locator
-                                                            // has been perfectly chained.
+            // We should believe that the locator returned by getLocator() is perfectly chained
+            setContext(driver().findElement(getLocator()));
           }
         } else {
-          System.err.println("The element failed to resolve");
-          System.err.println("ResolveWhen: " + when);
-          System.err.println("ResolveFrom: " + from);
-          System.err.println("ResolveBy: " + by);
-          throw new NullPointerException("The element failed to resolve.");
+          logger.error("The element " + getLocator() + " failed to resolve in " + getContext());
+          logger.error("ResolveWhen: " + when + ", ResolveFrom: " + from + ", ResolveBy: " + by);
+          throw new NullPointerException();
         }
       }
       return (WebElement) getContext();
-    }
-
-    // Slightly tweaks the findElement logic in BasilContext, mostly to avoid element
-    // resolution caused by invoking the locator().getConfident(). This is useful and
-    // uses less resources when incoming By is a Basil.hasXPath() compatible. Because
-    // you can just concatenate the XPaths.
-
-    @Override
-    public List<WebElement> findElements(By by) {
-      System.err.println("[BasilElement#findElements] This is: " + getLocator());
-      By unconcatenatedBy = by;
-      if (Basil.from(by).hasXPath()) {
-        if (getLocator().hasXPath()) {
-          by = getLocator().concat(by);
-        } else {
-          by = getConfidentLocator().concat(by);
-        }
-//        return driver().findElements(by);
-        if (Basil.from(by).isConfident()) { // When the current context is a nested-context, the
-          return driver().findElements(by); // getLocator() returns only its locator which may not
-        } else { // be confident since nested-context are usually assigned with locator like
-          // //tr[@class='headerRow']
-//          return context.findElements(unconcatenatedBy);
-          return driver().findElements(getConfidentLocator().concat(unconcatenatedBy));
-        }
-      }
-      return context().get().findElements(by);
-    }
-
-    @Override
-    public BasilElement findElement(By by) {
-      By unconcatenatedBy = by;
-      if (Basil.from(by).hasXPath() && !Basil.from(by).isConfident()) {
-        if (getLocator().hasXPath()) {
-          by = getLocator().concat(by);
-        } else {
-          by = getConfidentLocator().concat(by);
-        }
-      }
-      if (Basil.from(by).isConfident()) {
-        return BasilElement.create(driver(), by);
-      }
-      // Current BasilElement locator is:
-      //     //div[label[text()='Share option']]//table[contains(@class, 'dijitSelect')]
-      // And the by after concatenation is:
-      //     //div[label[text()='Share option']]//table[contains(@class, 'dijitSelect')]//.//td
-      // This causes the code
-      //     BasilElement.create(context().get(), by);
-      // to looking up an element with very wrong xpath:
-      //     //div[label[text()='Share option']]//table[contains(@class, 'dijitSelect')]//div[label[text()='Share option']]//table[contains(@class, 'dijitSelect')]//.//td
-      // And when BasilElement regenerates the locator, you see in console:
-      //     //table[@id='uniqName_21_0_updSelect']//div[label[text()='Share option']]//table[contains(@class, 'dijitSelect')]//.//td
-      return BasilElement.create(context().get(), unconcatenatedBy);
     }
 
   }

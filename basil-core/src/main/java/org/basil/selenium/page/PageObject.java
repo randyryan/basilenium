@@ -147,6 +147,9 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
 
     BasilContext parent = getParent();
     Basil locator = getLocator();
+    if (locator().hasConfident()) {
+      locator = getConfidentLocator();
+    }
     WebElement pageObject = null;
     try {
       ElementLookup lookup = ElementLookup.create(parent, PAGE_OBJECT_LOCATE_TIMEOUT);
