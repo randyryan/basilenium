@@ -37,23 +37,13 @@ public class WebElementServiceImpl implements WebElementService {
 
   private static final Logger logger = LoggerFactory.getLogger(WebElementService.class);
 
-  private SearchContext context;
   private XPathStatistics xpathStatistics;
 
-  WebElementServiceImpl(SearchContext context) {
-    this.context = context;
+  WebElementServiceImpl() {
     xpathStatistics = new XPathStatistics();
   }
 
   // Find services
-
-  @Override
-  public WebElement findElement(By locator) {
-    if (locator instanceof By.ByXPath) {
-      return findElementByXPath(XPathUtil.getXPath(locator));
-    }
-    return context.findElement(locator);
-  }
 
   @Override
   public WebElement findElement(By locator, SearchContext context) {
@@ -64,14 +54,6 @@ public class WebElementServiceImpl implements WebElementService {
   }
 
   @Override
-  public List<WebElement> findElements(By locator) {
-    if (locator instanceof By.ByXPath) {
-      return findElementsByXPath(XPathUtil.getXPath(locator));
-    }
-    return context.findElements(locator);
-  }
-
-  @Override
   public List<WebElement> findElements(By locator, SearchContext context) {
     if (locator instanceof By.ByXPath) {
       return findElementsByXPath(XPathUtil.getXPath(locator), context);
@@ -79,49 +61,35 @@ public class WebElementServiceImpl implements WebElementService {
     return context.findElements(locator);
   }
 
+  /**
+   * Core service method.
+   */
   @Override
-  public WebElement findElementByXPath(String xpath) {
-    return findElementByXPath(xpath, context);
+  public WebElement findElementByXPath(String xpathExpression, SearchContext context) {
+    By locator = By.xpath(xpathExpression);
+    if (context instanceof PageObject) {
+      locator = ((PageObject) context).getConfidentLocator().append(xpathExpression);
+    }
+    if (context instanceof WebElement) {
+      locator = By.xpath(getXPath((WebElement) context) + xpathExpression);
+    }
+    return BasilElement.create(context, locator);
   }
 
   /**
    * Core service method.
    */
   @Override
-  public WebElement findElementByXPath(String xpath, SearchContext context) {
-    By locator = By.xpath(xpath);
-    if (context != this.context) {
-      if (context instanceof PageObject) {
-        locator = ((PageObject) context).getConfidentLocator().append(xpath);
-      }
-      if (context instanceof WebElement) {
-        locator = By.xpath(getXPath((WebElement) context) + xpath);
-      }
+  public List<WebElement> findElementsByXPath(String xpathExpression, SearchContext context) {
+    By locator = By.xpath(xpathExpression);
+    if (context instanceof PageObject) {
+      locator = ((PageObject) context).getConfidentLocator().append(xpathExpression);
     }
-    return BasilElement.create(this.context, locator);
-  }
-
-  @Override
-  public List<WebElement> findElementsByXPath(String xpath) {
-    return findElementsByXPath(xpath, context);
-  }
-
-  /**
-   * Core service method.
-   */
-  @Override
-  public List<WebElement> findElementsByXPath(String xpath, SearchContext context) {
-    By locator = By.xpath(xpath);
-    if (context != this.context) {
-      if (context instanceof PageObject) {
-        locator = ((PageObject) context).getConfidentLocator().append(xpath);
-      }
-      if (context instanceof WebElement) {
-        locator = By.xpath(getXPath((WebElement) context) + xpath);
-      }
+    if (context instanceof WebElement) {
+      locator = By.xpath(getXPath((WebElement) context) + xpathExpression);
     }
-    xpathStatistics.recordHit(xpath);
-    return this.context.findElements(locator);
+    xpathStatistics.recordHit(xpathExpression);
+    return context.findElements(locator);
   }
 
   // TODO implement cache for id and tag because they will not likely to change

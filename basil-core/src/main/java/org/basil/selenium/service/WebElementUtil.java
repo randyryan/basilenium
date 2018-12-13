@@ -30,12 +30,13 @@ public final class WebElementUtil {
   private WebElementUtil() {}
 
   private static final Logger logger = LoggerFactory.getLogger(WebElementService.class);
-  private static final WebElementService service = new WebElementServiceImpl(DriverFactory.getWebDriver());
+  private static final WebElementService service = new WebElementServiceImpl();
+  private static final SearchContext context = DriverFactory.getWebDriver();
 
   // Find services
 
   public static WebElement findElementByXPath(String xpath) {
-    return service.findElementByXPath(xpath);
+    return service.findElementByXPath(xpath, context);
   }
 
   public static WebElement findElementByXPath(String xpath, SearchContext context) {
@@ -43,7 +44,7 @@ public final class WebElementUtil {
   }
 
   public static List<WebElement> findElementsByXPath(String xpath) {
-    return service.findElementsByXPath(xpath);
+    return service.findElementsByXPath(xpath, context);
   }
 
   public static List<WebElement> findElementsByXPath(String xpath, SearchContext context) {
@@ -51,11 +52,11 @@ public final class WebElementUtil {
   }
 
   public static WebElement findElementById(String id) {
-    return service.findElementByXPath("//*[@id='" + id + "']");
+    return service.findElementByXPath("//*[@id='" + id + "']", context);
   }
 
   public static WebElement findElementByText(String text) {
-    return service.findElementByXPath("//*[text()='" + text + "']");
+    return service.findElementByXPath("//*[text()='" + text + "']", context);
   }
 
   public static WebElement findElementByText(String text, SearchContext context) {
@@ -63,7 +64,7 @@ public final class WebElementUtil {
   }
 
   public static List<WebElement> findElementsByText(String text) {
-    return service.findElementsByXPath("//*[text()='" + text + "']");
+    return service.findElementsByXPath("//*[text()='" + text + "']", context);
   }
 
   public static List<WebElement> findElementsByText(String text, SearchContext context) {
@@ -71,7 +72,7 @@ public final class WebElementUtil {
   }
 
   public static WebElement findElementByLabel(String label) {
-    return service.findElementByXPath("//*[@id=//label[text()='" + label + "']/@for]");
+    return service.findElementByXPath("//*[@id=//label[text()='" + label + "']/@for]", context);
   }
 
   public static WebElement findElementByLabel(String label, SearchContext context) {
@@ -89,7 +90,7 @@ public final class WebElementUtil {
   }
 
   public static List<WebElement> findElementsByLabel(String label) {
-    return service.findElementsByXPath("//label[text()='" + label + "']");
+    return service.findElementsByXPath("//label[text()='" + label + "']", context);
   }
 
   public static List<WebElement> findElementsByLabel(String label, SearchContext context) {

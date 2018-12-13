@@ -23,21 +23,13 @@ public interface WebElementService {
 
   // Find services
 
-  WebElement findElement(By locator);
-
   WebElement findElement(By locator, SearchContext context);
-
-  List<WebElement> findElements(By locator);
 
   List<WebElement> findElements(By locator, SearchContext context);
 
-  WebElement findElementByXPath(String xpath);
+  WebElement findElementByXPath(String xpathExpression, SearchContext context);
 
-  WebElement findElementByXPath(String xpath, SearchContext context);
-
-  List<WebElement> findElementsByXPath(String xpath);
-
-  List<WebElement> findElementsByXPath(String xpath, SearchContext context);
+  List<WebElement> findElementsByXPath(String xpathExpression, SearchContext context);
 
   // Property services
 
