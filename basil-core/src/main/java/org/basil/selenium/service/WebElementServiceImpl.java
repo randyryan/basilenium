@@ -30,20 +30,15 @@ import com.google.common.collect.Maps;
 /**
  * WebElementServiceImpl
  *
+ * TODO Cache the elements' id and tag because those are very less likely to change
+ *      and probably very safe to retrieve them only for once.
+ *
  * @author ryan131
  * @since Sep 14, 2014, 1:38:52 PM
  */
 public class WebElementServiceImpl implements WebElementService {
 
-  private static final Logger logger = LoggerFactory.getLogger(WebElementService.class);
-
-  private XPathStatistics xpathStatistics;
-
-  WebElementServiceImpl() {
-    xpathStatistics = new XPathStatistics();
-  }
-
-  // Find services
+  // Find element services
 
   @Override
   public WebElement findElement(By locator, SearchContext context) {
@@ -92,10 +87,17 @@ public class WebElementServiceImpl implements WebElementService {
     return context.findElements(locator);
   }
 
-  // TODO implement cache for id and tag because they will not likely to change
-  // so it's safe to get them for only once.
+  // WebElement attribute services
 
-  // Property services
+  @Override
+  public String getAttr(WebElement element, String attrName) {
+    return ElementActions.attrOf(element, attrName);
+  }
+
+  @Override
+  public boolean hasAttr(WebElement element, String attrName) {
+    return !Strings.isNullOrEmpty(element.getAttribute(attrName));
+  }
 
   @Override
   public String getId(WebElement element) {
@@ -103,8 +105,28 @@ public class WebElementServiceImpl implements WebElementService {
   }
 
   @Override
-  public String getTag(WebElement element) {
-    return ElementActions.tagOf(element);
+  public boolean hasId(WebElement element) {
+    return hasAttr(element, "id");
+  }
+
+  @Override
+  public String getClass(WebElement element) {
+    return ElementActions.classOf(element);
+  }
+
+  @Override
+  public boolean hasClass(WebElement element, String className) {
+    return getClass(element).toLowerCase().contains(className.toLowerCase());
+  }
+
+  @Override
+  public String getTitle(WebElement element) {
+    return element.getAttribute("title");
+  }
+
+  @Override
+  public boolean hasTitle(WebElement element) {
+    return hasAttr(element, "title");
   }
 
   @Override
@@ -113,13 +135,30 @@ public class WebElementServiceImpl implements WebElementService {
   }
 
   @Override
-  public String getAttr(WebElement element, String attrName) {
-    return ElementActions.attrOf(element, attrName);
+  public boolean hasType(WebElement element) {
+    return hasAttr(element, "type");
   }
 
   @Override
-  public String getClass(WebElement element) {
-    return ElementActions.classOf(element);
+  public ValueConverter getValue(WebElement element) {
+    return ElementActions.value(element);
+  }
+
+  @Override
+  public String getInnerHTML(WebElement element) {
+    return element.getAttribute("innerHTML");
+  }
+
+  @Override
+  public String getOuterHTML(WebElement element) {
+    return element.getAttribute("outerHTML");
+  }
+
+  // WebElement property services
+
+  @Override
+  public String getTag(WebElement element) {
+    return ElementActions.tagOf(element);
   }
 
   @Deprecated
@@ -134,16 +173,6 @@ public class WebElementServiceImpl implements WebElementService {
   public String getXPath(WebElement element, String xpathExpression) {
     // return ElementActions.xpathOf(element, xpathExpression);
     return XPathUtil.getXPath(element, xpathExpression);
-  }
-
-  @Override
-  public String getValue(WebElement element) {
-    return ElementActions.valueOf(element);
-  }
-
-  @Override
-  public ValueConverter value(WebElement element) {
-    return ElementActions.value(element);
   }
 
   @Override
@@ -171,7 +200,7 @@ public class WebElementServiceImpl implements WebElementService {
     // ElementActions does not contain such method
     boolean isDisplayed = element.isDisplayed();
     boolean isEnabled = element.isEnabled();
-    boolean isEnabledInClass = !getClass(element).contains("isable");
+    boolean isEnabledInClass = !hasClass(element, "disabled");
     return isDisplayed && isEnabled && isEnabledInClass;
   }
 
@@ -412,32 +441,47 @@ public class WebElementServiceImpl implements WebElementService {
     }
 
     public static ValueConverter value(WebElement element) {
-      final String value = valueOf(element);
+      final String value = Strings.nullToEmpty(valueOf(element));
       return new ValueConverter() {
 
         @Override
-        public int asInt() {
+        public boolean toBoolean() {
+          return value.equals("") ? false : Boolean.parseBoolean(value);
+        }
+
+        @Override
+        public byte toByte() {
+          return value.equals("") ? 0 : Byte.parseByte(value);
+        }
+
+        @Override
+        public short toShort() {
+          return value.equals("") ? 0 : Short.parseShort(value);
+        }
+
+        @Override
+        public int toInt() {
           return value.equals("") ? 0 : Integer.parseInt(value);
         }
 
         @Override
-        public long asLong() {
+        public long toLong() {
           return value.equals("") ? 0L : Long.parseLong(value);
         }
 
         @Override
-        public float asFloat() {
+        public float toFloat() {
           return value.equals("") ? 0.0F : Float.parseFloat(value);
         }
 
         @Override
-        public double asDouble() {
+        public double toDouble() {
           return value.equals("") ? 0.0D : Double.parseDouble(value);
         }
 
         @Override
-        public boolean asBoolean() {
-          return value.equals("") ? false : Boolean.parseBoolean(value);
+        public char[] toChars() {
+          return value.toCharArray();
         }
 
         @Override
@@ -722,6 +766,14 @@ public class WebElementServiceImpl implements WebElementService {
       return current == null ? 0 : current;
     }
 
+  }
+
+  private static final Logger logger = LoggerFactory.getLogger(WebElementService.class);
+
+  private XPathStatistics xpathStatistics;
+
+  WebElementServiceImpl() {
+    xpathStatistics = new XPathStatistics();
   }
 
 }

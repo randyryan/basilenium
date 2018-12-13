@@ -21,7 +21,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  */
 public interface WebElementService {
 
-  // Find services
+  // Find element services
 
   WebElement findElement(By locator, SearchContext context);
 
@@ -31,41 +31,65 @@ public interface WebElementService {
 
   List<WebElement> findElementsByXPath(String xpathExpression, SearchContext context);
 
-  // Property services
-
-  String getId(WebElement element);
-
-  String getTag(WebElement element);
-
-  String getType(WebElement element);
+ // WebElement attribute services
 
   String getAttr(WebElement element, String attrName);
 
+  boolean hasAttr(WebElement element, String attrName);
+
+  String getId(WebElement element);
+
+  boolean hasId(WebElement element);
+
   String getClass(WebElement element);
+
+  boolean hasClass(WebElement element, String className);
+
+  String getTitle(WebElement element);
+
+  boolean hasTitle(WebElement element);
+
+  String getType(WebElement element);
+
+  boolean hasType(WebElement element);
+
+  ValueConverter getValue(WebElement element);
+
+  public interface ValueConverter {
+
+    boolean toBoolean();
+
+    byte toByte();
+
+    short toShort();
+
+    int toInt();
+
+    long toLong();
+
+    float toFloat();
+
+    double toDouble();
+
+    char[] toChars();
+
+    String toString();
+
+  }
+
+  String getInnerHTML(WebElement element);
+
+  String getOuterHTML(WebElement element);
+
+  // WebElement property services
+
+  String getTag(WebElement element);
 
   @Deprecated
   String getXPath(WebElement element);
 
   @Deprecated
   String getXPath(WebElement element, String xpathExpression);
-
-  String getValue(WebElement element);
-
-  ValueConverter value(WebElement element);
-
-  public interface ValueConverter {
-
-    int asInt();
-
-    long asLong();
-
-    float asFloat();
-
-    double asDouble();
-
-    boolean asBoolean();
-
-  }
 
   String getText(WebElement element);
 

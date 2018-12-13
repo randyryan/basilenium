@@ -10,6 +10,7 @@ import org.basil.selenium.BasilElement;
 import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.service.WebElementService.NeighboringElementProvider;
 import org.basil.selenium.service.WebElementService.ValueConverter;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
@@ -29,29 +30,45 @@ import com.google.common.collect.Lists;
 public final class WebElementUtil {
   private WebElementUtil() {}
 
-  private static final Logger logger = LoggerFactory.getLogger(WebElementService.class);
-  private static final WebElementService service = new WebElementServiceImpl();
-  private static final SearchContext context = DriverFactory.getWebDriver();
+  // Find element services
 
-  // Find services
-
-  public static WebElement findElementByXPath(String xpath) {
-    return service.findElementByXPath(xpath, context);
+  public static WebElement findElement(By locator) {
+    return service.findElement(locator, context);
   }
 
-  public static WebElement findElementByXPath(String xpath, SearchContext context) {
-    return service.findElementByXPath(xpath, context);
+  public static WebElement findElement(By locator, SearchContext context) {
+    return service.findElement(locator, context);
   }
 
-  public static List<WebElement> findElementsByXPath(String xpath) {
-    return service.findElementsByXPath(xpath, context);
+  public static List<WebElement> findElements(By locator) {
+    return service.findElements(locator, context);
   }
 
-  public static List<WebElement> findElementsByXPath(String xpath, SearchContext context) {
-    return service.findElementsByXPath(xpath, context);
+  public static List<WebElement> findElements(By locator, SearchContext context) {
+    return service.findElements(locator, context);
+  }
+
+  public static WebElement findElementByXPath(String xpathExpression) {
+    return service.findElementByXPath(xpathExpression, context);
+  }
+
+  public static WebElement findElementByXPath(String xpathExpression, SearchContext context) {
+    return service.findElementByXPath(xpathExpression, context);
+  }
+
+  public static List<WebElement> findElementsByXPath(String xpathExpression) {
+    return service.findElementsByXPath(xpathExpression, context);
+  }
+
+  public static List<WebElement> findElementsByXPath(String xpathExpression, SearchContext context) {
+    return service.findElementsByXPath(xpathExpression, context);
   }
 
   public static WebElement findElementById(String id) {
+    return service.findElementByXPath("//*[@id='" + id + "']", context);
+  }
+
+  public static WebElement findElementById(String id, SearchContext context) {
     return service.findElementByXPath("//*[@id='" + id + "']", context);
   }
 
@@ -114,26 +131,80 @@ public final class WebElementUtil {
     return elements;
   }
 
-  // Property services
+  public static WebElement findLabel(String label) {
+    return service.findElementByXPath("//label[text()='" + label + "']", context);
+  }
+
+  public static WebElement findLabel(String label, SearchContext context) {
+    return service.findElementByXPath("//label[text()='" + label + "']", context);
+  }
+
+  public static String findLabelForId(String label) {
+    return findLabel(label).getAttribute("for");
+  }
+
+  public static String findLabelForId(String label, SearchContext context) {
+    return findLabel(label, context).getAttribute("for");
+  }
+
+  // WebElement attribute services
+
+  public static String getAttr(WebElement element, String attrName) {
+    return service.getAttr(element, attrName);
+  }
+
+  public static boolean hasAttr(WebElement element, String attrName) {
+    return service.hasAttr(element, attrName);
+  }
 
   public static String getId(WebElement element) {
     return service.getId(element);
   }
 
-  public static String getTag(WebElement element) {
-    return service.getTag(element);
+  public static boolean hasId(WebElement element) {
+    return service.hasId(element);
+  }
+
+  public static String getClass(WebElement element) {
+    return service.getClass(element);
+  }
+
+  public static boolean hasClass(WebElement element, String className) {
+    return service.hasClass(element, className);
+  }
+
+  public static String getTitle(WebElement element) {
+    return service.getTitle(element);
+  }
+
+  public static boolean hasTitle(WebElement element) {
+    return service.hasTitle(element);
   }
 
   public static String getType(WebElement element) {
     return service.getType(element);
   }
 
-  public static String getAttr(WebElement element, String attrName) {
-    return service.getAttr(element, attrName);
+  public static boolean hasType(WebElement element) {
+    return service.hasType(element);
   }
 
-  public static String getClass(WebElement element) {
-    return service.getClass(element);
+  public static ValueConverter getValue(WebElement element) {
+    return service.getValue(element);
+  }
+
+  public static String getInnerHTML(WebElement element) {
+    return service.getInnerHTML(element);
+  }
+
+  public static String getOuterHTML(WebElement element) {
+    return service.getOuterHTML(element);
+  }
+
+  // WebElement property services
+
+  public static String getTag(WebElement element) {
+    return service.getTag(element);
   }
 
   @Deprecated
@@ -144,14 +215,6 @@ public final class WebElementUtil {
   @Deprecated
   public static String getXPath(WebElement element, String xpathExpression) {
     return service.getXPath(element, xpathExpression);
-  }
-
-  public static String getValue(WebElement element) {
-    return service.getValue(element);
-  }
-
-  public static ValueConverter value(WebElement element) {
-    return service.value(element);
   }
 
   public static String getText(WebElement element) {
@@ -269,5 +332,9 @@ public final class WebElementUtil {
   public NeighboringElementProvider getNeighboringElement(WebElement element) {
     return service.getNeighboringElement(element);
   }
+
+  private static final Logger logger = LoggerFactory.getLogger(WebElementService.class);
+  private static final WebElementService service = new WebElementServiceImpl();
+  private static final SearchContext context = DriverFactory.getWebDriver();
 
 }
