@@ -7,9 +7,14 @@ package org.basil.selenium.service;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -31,11 +36,47 @@ public interface WebElementService {
 
   List<WebElement> findElementsByXPath(String xpathExpression, SearchContext context);
 
+  // WebElement standard services
+
+  <X> X getScreenshotAs(WebElement element, OutputType<X> target) throws WebDriverException;
+
+  void click(WebElement element);
+
+  void submit(WebElement element);
+
+  void sendKeys(WebElement element, CharSequence... keysToSend);
+
+  void clear(WebElement element);
+
+  String getTagName(WebElement element);
+
+  String getAttribute(WebElement element, String name);
+
+  boolean isSelected(WebElement element);
+
+  boolean isEnabled(WebElement element);
+
+  String getText(WebElement element);
+
+  boolean isDisplayed(WebElement element);
+
+  Point getLocation(WebElement element);
+
+  Dimension getSize(WebElement element);
+
+  Rectangle getRect(WebElement element);
+
+  String getCssValue(WebElement element, String propertyName);
+
  // WebElement attribute services
 
+  @Deprecated
   String getAttr(WebElement element, String attrName);
 
+  @Deprecated
   boolean hasAttr(WebElement element, String attrName);
+
+  boolean hasAttribute(WebElement element, String attributeName);
 
   String getId(WebElement element);
 
@@ -83,6 +124,7 @@ public interface WebElementService {
 
   // WebElement property services
 
+  @Deprecated
   String getTag(WebElement element);
 
   @Deprecated
@@ -91,11 +133,11 @@ public interface WebElementService {
   @Deprecated
   String getXPath(WebElement element, String xpathExpression);
 
-  String getText(WebElement element);
+//  String getText(WebElement element);
 
   List<String> getText(List<WebElement> elements);
 
-  boolean isEnabled(WebElement element);
+//  boolean isEnabled(WebElement element);
 
   boolean isDisabled(WebElement element);
 
@@ -124,7 +166,7 @@ public interface WebElementService {
 
   // Interaction services
 
-  void click(WebElement element);
+//  void click(WebElement element);
 
   void jsClick(WebElement element);
 

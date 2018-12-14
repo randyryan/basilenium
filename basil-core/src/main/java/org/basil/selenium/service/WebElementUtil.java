@@ -11,9 +11,14 @@ import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.service.WebElementService.NeighboringElementProvider;
 import org.basil.selenium.service.WebElementService.ValueConverter;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -147,14 +152,78 @@ public final class WebElementUtil {
     return findLabel(label, context).getAttribute("for");
   }
 
+  // WebElement standard services
+
+  public static <X> X getScreenshotAs(WebElement element, OutputType<X> target) throws WebDriverException {
+    return service.getScreenshotAs(element, target);
+  }
+
+  public static void submit(WebElement element) {
+    service.submit(element);
+  }
+
+  public static void sendKeys(WebElement element, CharSequence... keysToSend) {
+    service.sendKeys(element, keysToSend);
+  }
+
+  public static void clear(WebElement element) {
+    service.clear(element);
+  }
+
+  public static String getTagName(WebElement element) {
+    return service.getTagName(element);
+  }
+
+  public static String getAttribute(WebElement element, String name) {
+    return service.getAttribute(element, name);
+  }
+
+  public static boolean isSelected(WebElement element) {
+    return service.isSelected(element);
+  }
+
+  public static boolean isEnabled(WebElement element) {
+    return service.isEnabled(element);
+  }
+
+  public static String getText(WebElement element) {
+    return service.getText(element);
+  }
+
+  public static boolean isDisplayed(WebElement element) {
+    return service.isDisplayed(element);
+  }
+
+  public static Point getLocation(WebElement element) {
+    return service.getLocation(element);
+  }
+
+  public static Dimension getSize(WebElement element) {
+    return service.getSize(element);
+  }
+
+  public static Rectangle getRect(WebElement element) {
+    return service.getRect(element);
+  }
+
+  public static String getCssValue(WebElement element, String propertyName) {
+    return service.getCssValue(element, propertyName);
+  }
+
   // WebElement attribute services
 
+  @Deprecated
   public static String getAttr(WebElement element, String attrName) {
     return service.getAttr(element, attrName);
   }
 
+  @Deprecated
   public static boolean hasAttr(WebElement element, String attrName) {
     return service.hasAttr(element, attrName);
+  }
+
+  public static boolean hasAttribute(WebElement element, String attributeName) {
+    return service.hasAttribute(element, attributeName);
   }
 
   public static String getId(WebElement element) {
@@ -203,6 +272,7 @@ public final class WebElementUtil {
 
   // WebElement property services
 
+  @Deprecated
   public static String getTag(WebElement element) {
     return service.getTag(element);
   }
@@ -217,17 +287,17 @@ public final class WebElementUtil {
     return service.getXPath(element, xpathExpression);
   }
 
-  public static String getText(WebElement element) {
-    return service.getText(element);
-  }
+//  public static String getText(WebElement element) {
+//    return service.getText(element);
+//  }
 
   public static List<String> getText(List<WebElement> elements) {
     return service.getText(elements);
   }
 
-  public static boolean isEnabled(WebElement element) {
-    return service.isEnabled(element);
-  }
+//  public static boolean isEnabled(WebElement element) {
+//    return service.isEnabled(element);
+//  }
 
   public static boolean isDisabled(WebElement element) {
     return service.isDisabled(element);
@@ -329,12 +399,14 @@ public final class WebElementUtil {
     return service.getChildElement(parentElement, index);
   }
 
-  public NeighboringElementProvider getNeighboringElement(WebElement element) {
+  public static NeighboringElementProvider getNeighboringElement(WebElement element) {
     return service.getNeighboringElement(element);
   }
 
   private static final Logger logger = LoggerFactory.getLogger(WebElementService.class);
+
   private static final WebElementService service = new WebElementServiceImpl();
+
   private static final SearchContext context = DriverFactory.getWebDriver();
 
 }

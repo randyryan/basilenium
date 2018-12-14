@@ -14,10 +14,15 @@ import org.basil.selenium.BasilException;
 import org.basil.selenium.page.PageObject;
 import org.basil.selenium.ui.ExtendedConditions;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -87,16 +92,100 @@ public class WebElementServiceImpl implements WebElementService {
     return context.findElements(locator);
   }
 
+  // WebElement standard services
+
+  @Override
+  public <X> X getScreenshotAs(WebElement element, OutputType<X> target) throws WebDriverException {
+    return element.getScreenshotAs(target);
+  }
+
+  @Override
+  public void click(WebElement element) {
+    ElementActions.click(element);
+  }
+
+  @Override
+  public void submit(WebElement element) {
+    element.submit();
+  }
+
+  @Override
+  public void sendKeys(WebElement element, CharSequence... keysToSend) {
+    element.sendKeys(keysToSend);
+  }
+
+  @Override
+  public void clear(WebElement element) {
+    element.clear();
+  }
+
+  @Override
+  public String getTagName(WebElement element) {
+    return element.getTagName();
+  }
+
+  @Override
+  public String getAttribute(WebElement element, String name) {
+    return element.getAttribute(name);
+  }
+
+  @Override
+  public boolean isSelected(WebElement element) {
+    return element.isSelected();
+  }
+
+  @Override
+  public boolean isEnabled(WebElement element) {
+    return ElementActions.isEnabled(element);
+  }
+
+  @Override
+  public String getText(WebElement element) {
+    return ElementActions.textOf(element);
+  }
+
+  @Override
+  public boolean isDisplayed(WebElement element) {
+    return element.isDisplayed();
+  }
+
+  @Override
+  public Point getLocation(WebElement element) {
+    return element.getLocation();
+  }
+
+  @Override
+  public Dimension getSize(WebElement element) {
+    return element.getSize();
+  }
+
+  @Override
+  public Rectangle getRect(WebElement element) {
+    return element.getRect();
+  }
+
+  @Override
+  public String getCssValue(WebElement element, String propertyName) {
+    return element.getCssValue(propertyName);
+  }
+
   // WebElement attribute services
 
   @Override
+  @Deprecated
   public String getAttr(WebElement element, String attrName) {
     return ElementActions.attrOf(element, attrName);
   }
 
   @Override
+  @Deprecated
   public boolean hasAttr(WebElement element, String attrName) {
-    return !Strings.isNullOrEmpty(element.getAttribute(attrName));
+    return hasAttribute(element, attrName);
+  }
+
+  @Override
+  public boolean hasAttribute(WebElement element, String attributeName) {
+    return !Strings.isNullOrEmpty(element.getAttribute(attributeName));
   }
 
   @Override
@@ -157,38 +246,39 @@ public class WebElementServiceImpl implements WebElementService {
   // WebElement property services
 
   @Override
+  @Deprecated
   public String getTag(WebElement element) {
     return ElementActions.tagOf(element);
   }
 
-  @Deprecated
   @Override
+  @Deprecated
   public String getXPath(WebElement element) {
     // return ElementActions.xpathOf(element);
     return XPathUtil.getXPath(element);
   }
 
-  @Deprecated
   @Override
+  @Deprecated
   public String getXPath(WebElement element, String xpathExpression) {
     // return ElementActions.xpathOf(element, xpathExpression);
     return XPathUtil.getXPath(element, xpathExpression);
   }
 
-  @Override
-  public String getText(WebElement element) {
-    return ElementActions.textOf(element);
-  }
+//  @Override
+//  public String getText(WebElement element) {
+//    return ElementActions.textOf(element);
+//  }
 
   @Override
   public List<String> getText(List<WebElement> elements) {
     return ElementActions.textOf(elements);
   }
 
-  @Override
-  public boolean isEnabled(WebElement element) {
-    return ElementActions.isEnabled(element);
-  }
+//  @Override
+//  public boolean isEnabled(WebElement element) {
+//    return ElementActions.isEnabled(element);
+//  }
 
   @Override
   public boolean isDisabled(WebElement element) {
@@ -254,10 +344,10 @@ public class WebElementServiceImpl implements WebElementService {
 
   // Interaction services
 
-  @Override
-  public void click(WebElement element) {
-    ElementActions.click(element);
-  }
+//  @Override
+//  public void click(WebElement element) {
+//    ElementActions.click(element);
+//  }
 
   @Override
   public void jsClick(WebElement element) {
