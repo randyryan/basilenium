@@ -277,6 +277,14 @@ public final class WebElementUtil {
     return service.getTag(element);
   }
 
+//  public static String getText(WebElement element) {
+//    return service.getText(element);
+//  }
+
+  public static List<String> getText(List<WebElement> elements) {
+    return service.getText(elements);
+  }
+
   @Deprecated
   public static String getXPath(WebElement element) {
     return service.getXPath(element);
@@ -285,14 +293,6 @@ public final class WebElementUtil {
   @Deprecated
   public static String getXPath(WebElement element, String xpathExpression) {
     return service.getXPath(element, xpathExpression);
-  }
-
-//  public static String getText(WebElement element) {
-//    return service.getText(element);
-//  }
-
-  public static List<String> getText(List<WebElement> elements) {
-    return service.getText(elements);
   }
 
 //  public static boolean isEnabled(WebElement element) {

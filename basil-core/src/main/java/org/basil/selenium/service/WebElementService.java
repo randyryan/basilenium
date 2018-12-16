@@ -127,15 +127,15 @@ public interface WebElementService {
   @Deprecated
   String getTag(WebElement element);
 
+//  String getText(WebElement element);
+
+  List<String> getText(List<WebElement> elements);
+
   @Deprecated
   String getXPath(WebElement element);
 
   @Deprecated
   String getXPath(WebElement element, String xpathExpression);
-
-//  String getText(WebElement element);
-
-  List<String> getText(List<WebElement> elements);
 
 //  boolean isEnabled(WebElement element);
 

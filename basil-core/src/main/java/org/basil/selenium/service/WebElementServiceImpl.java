@@ -489,41 +489,27 @@ public class WebElementServiceImpl implements WebElementService {
    * will automatically optimizes frequently used objects.
    *
    * @author ryan131
-   * @since Oct 11, 2015, 7:00:18 PM
+   * @since Oct 11, 2013, 7:00:18 PM
    */
   static final class ElementActions extends ServiceContext {
     private ElementActions() {}
 
     // Property
 
-    public static String idOf(WebElement element) {
-      return attrOf(element, "id");
-    }
-
-    public static String tagOf(WebElement element) {
-      return element.getTagName();
-    }
-
-    public static String typeOf(WebElement element) {
-      return attrOf(element, "type");
-    }
-
     public static String attrOf(WebElement element, String attribute) {
       return element.getAttribute(attribute);
+    }
+
+    public static String idOf(WebElement element) {
+      return attrOf(element, "id");
     }
 
     public static String classOf(WebElement element) {
       return attrOf(element, "class");
     }
 
-    @Deprecated
-    public static String xpathOf(WebElement element) {
-      return XPathUtil.getXPath(element);
-    }
-
-    @Deprecated
-    public static String xpathOf(WebElement element, String xpathExpression) {
-      return XPathUtil.getXPath(element, xpathExpression);
+    public static String typeOf(WebElement element) {
+      return attrOf(element, "type");
     }
 
     public static String valueOf(WebElement element) {
@@ -582,6 +568,10 @@ public class WebElementServiceImpl implements WebElementService {
       };
     }
 
+    public static String tagOf(WebElement element) {
+      return element.getTagName();
+    }
+
     public static String textOf(WebElement element) {
       return element.getText();
     }
@@ -592,6 +582,16 @@ public class WebElementServiceImpl implements WebElementService {
         texts.add(element.getText());
       }
       return texts;
+    }
+
+    @Deprecated
+    public static String xpathOf(WebElement element) {
+      return XPathUtil.getXPath(element);
+    }
+
+    @Deprecated
+    public static String xpathOf(WebElement element, String xpathExpression) {
+      return XPathUtil.getXPath(element, xpathExpression);
     }
 
     public static boolean isEnabled(WebElement element) {
@@ -743,7 +743,7 @@ public class WebElementServiceImpl implements WebElementService {
    * ElementValidator
    *
    * @author ryan131
-   * @since Dec 2, 2015, 19:36:35 PM
+   * @since Dec 2, 2013, 19:36:35 PM
    */
   static final class ElementValidator {
     private ElementValidator() {}
