@@ -6,6 +6,7 @@ package org.basil.selenium.service;
 
 import java.util.List;
 
+import org.basil.selenium.BasilException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -148,20 +149,30 @@ public interface WebElementService {
 
   // Validation services
 
+  boolean validate(WebElement element, ValidationRule rule) throws BasilException.InvalidElement;
+
+  @Deprecated
   boolean validateTag(WebElement element, String tag);
 
+  @Deprecated
   boolean validateTagAndClass(WebElement element, String tag, String clazz);
 
+  @Deprecated
   boolean validateInputType(WebElement element, String type);
 
+  @Deprecated
   boolean validateTextInput(WebElement element);
 
+  @Deprecated
   boolean validateLink(WebElement link);
 
+  @Deprecated
   boolean validateButton(WebElement button);
 
+  @Deprecated
   boolean validateCheckBox(WebElement checkBox);
 
+  @Deprecated
   boolean validateRadioButton(WebElement radioButton);
 
   // Interaction services

@@ -314,6 +314,10 @@ public final class WebElementUtil {
 
   // Validation services
 
+  public static boolean validate(WebElement element, ValidationRule rule) {
+    return service.validate(element, rule);
+  }
+
   /**
    * Temporarily allow this method to be accessed here, 'till there's a new set of validation API.
    */

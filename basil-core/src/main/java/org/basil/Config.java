@@ -58,9 +58,11 @@ public interface Config {
 
     String WEB_ELEMENT_ENABLE_LATENCY = "web.element.enable.latency";
 
+    String WEB_ELEMENT_VALIDATION_ENABLED = "web.element.validation.enabled";
+
     String WEB_ELEMENT_VALIDATION_EXCEPTION = "web.element.validation.exception";
 
-    String WEB_ELEMENT_VALIDATION_IGNORED_TYPES = "web.element.ignored.types";
+    String WEB_ELEMENT_VALIDATION_IGNORED_TYPES = "web.element.validation.ignoredtypes";
 
     String WEB_ELEMENT_INTERACTIBILITY_PRECONDITION = "web.element.interactibility.precondition";
 
@@ -115,6 +117,8 @@ public interface Config {
   // WebElement
 
   long WEB_ELEMENT_ENABLE_LATENCY = PropertyUtil.getLong(Key.WEB_ELEMENT_ENABLE_LATENCY);
+
+  boolean WEB_ELEMENT_VALIDATION_ENABLED = Booleans.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_VALIDATION_ENABLED));
 
   boolean WEB_ELEMENT_VALIDATION_EXCEPTION = Booleans.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_VALIDATION_EXCEPTION));
 

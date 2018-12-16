@@ -29,6 +29,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -301,6 +302,20 @@ public class WebElementServiceImpl implements WebElementService {
   }
 
   // Validation services
+
+  public boolean validate(final WebElement element, ValidationRule rule) {
+    if (!Config.WEB_ELEMENT_VALIDATION_ENABLED) {
+      return true;
+    }
+    if (Config.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.contains(rule.getType())) {
+      return true;
+    }
+    BasilException.InvalidElement validationException = rule.apply(element);
+    if (Config.WEB_ELEMENT_VALIDATION_EXCEPTION && validationException != null) {
+      throw validationException;
+    }
+    return validationException == null;
+  }
 
   @Override
   public boolean validateTag(WebElement element, String tag) {
@@ -744,18 +759,16 @@ public class WebElementServiceImpl implements WebElementService {
    *
    * @author ryan131
    * @since Dec 2, 2013, 19:36:35 PM
+   * @deprecated Moved to and as ValidationRule
    */
+  @Deprecated
   static final class ElementValidator {
     private ElementValidator() {}
-
-    private static final boolean THROW_EXCEPTION = Config.WEB_ELEMENT_VALIDATION_EXCEPTION;
-    private static final boolean VALIDATE_BUTTONS =
-            Config.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.indexOf("button") == -1;
 
     private static void reportInvalid(WebElement actual, String expected) {
       if (THROW_EXCEPTION) {
         String xpath = XPathUtil.getXPath(actual);
-        throw new BasilException.Element.Invalid(
+        throw new BasilException.InvalidElement(
                 "The element \"" + xpath + "\" is not a valid \"" + expected + "\".");
       }
     }
@@ -763,7 +776,7 @@ public class WebElementServiceImpl implements WebElementService {
     private static void reportInvalidTagName(WebElement element, String expectedTagName) {
       if (THROW_EXCEPTION) {
         String xpath = XPathUtil.getXPath(element);
-        throw new BasilException.Element.InvalidTagName(
+        throw new BasilException.InvalidTagName(
                 "The element \"" + xpath + "\" is not a valid \"" + expectedTagName + "\".");
       }
     }
@@ -797,13 +810,13 @@ public class WebElementServiceImpl implements WebElementService {
     public static boolean validateTextInput(WebElement input) {
       try {
         return validateInputType(input, "text");
-      } catch (BasilException.Element.Invalid validatePassword) {}
+      } catch (BasilException.InvalidElement validatePassword) {}
       try {
         return validateInputType(input, "password");
-      } catch (BasilException.Element.Invalid validateTextarea) {}
+      } catch (BasilException.InvalidElement validateTextarea) {}
       try {
         return validateTag(input, "textarea");
-      } catch (BasilException.Element.Invalid report) {
+      } catch (BasilException.InvalidElement report) {
         reportInvalid(input, "textual input");
       }
       return false;
@@ -812,11 +825,11 @@ public class WebElementServiceImpl implements WebElementService {
     public static boolean validateLink(WebElement link) {
       try {
         return validateTag(link, "a");
-      } catch (BasilException.Element.InvalidTagName validateLabel) {}
+      } catch (BasilException.InvalidTagName validateLabel) {}
       try {
         // label can be used as links, See http://stackoverflow.com/a/17964889
         return validateTag(link, "label");
-      } catch (BasilException.Element.Invalid report) {
+      } catch (BasilException.InvalidElement report) {
         reportInvalid(link, "link");
       }
       return false;
@@ -836,6 +849,15 @@ public class WebElementServiceImpl implements WebElementService {
     public static boolean validateRadioButton(WebElement radioButton) {
       return validateInputType(radioButton, "radio");
     }
+
+    static {
+      ENABLED = Config.WEB_ELEMENT_VALIDATION_ENABLED;
+    }
+
+    private static final boolean ENABLED;
+    private static final boolean THROW_EXCEPTION = Config.WEB_ELEMENT_VALIDATION_EXCEPTION;
+    private static final boolean VALIDATE_BUTTONS =
+            Config.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.indexOf("button") == -1;
 
   }
 

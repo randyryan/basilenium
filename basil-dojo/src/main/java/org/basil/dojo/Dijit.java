@@ -10,7 +10,7 @@ import java.util.List;
 import org.basil.dojo.widget.DijitCalendar;
 import org.basil.dojo.widget.DijitMenu;
 import org.basil.selenium.BasilElement;
-import org.basil.selenium.BasilException.Element;
+import org.basil.selenium.BasilException;
 import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.page.BaseLookup;
 import org.basil.selenium.service.WebElementService;
@@ -196,7 +196,7 @@ public abstract class Dijit extends BasilElement {
   public static void setSpinnerValue(WebElement spinner, double targetValue) {
     try {
       WebElementUtil.validateTagAndClass(spinner, "div", "dijitSpinner");
-    } catch (Element.Invalid notWidgetWrapper) {
+    } catch (BasilException.InvalidElement notWidgetWrapper) {
       spinner = getWrapperAgnostic(spinner);
     }
 
@@ -227,7 +227,7 @@ public abstract class Dijit extends BasilElement {
   public static void inputSpinnerValue(WebElement spinner, String stringValue) {
     try {
         WebElementUtil.validateTagAndClass(spinner, "div", "dijitSpinner");
-    } catch (Element.Invalid notWidgetWrapper) {
+    } catch (BasilException.InvalidElement notWidgetWrapper) {
       spinner = getWrapperAgnostic(spinner);
     }
 

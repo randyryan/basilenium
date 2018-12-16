@@ -35,7 +35,7 @@ public abstract class BasilException extends RuntimeException {
    * @author ryan131
    * @since Jun 28, 2014, 10:33:51 AM
    */
-  public static class Element extends BasilException {
+  public static abstract class Element extends BasilException {
 
     public Element() {
       super();
@@ -53,72 +53,75 @@ public abstract class BasilException extends RuntimeException {
       super(rootCause);
     }
 
-    public static class Invalid extends Element {
+  }
 
-      public Invalid() {
-        super();
-      }
+  /**
+   * The ValidationException for invalid WebElements.
+   */
+  public static class InvalidElement extends Element {
 
-      public Invalid(String message) {
-        super(message);
-      }
-
-      public Invalid(String message, Throwable rootCause) {
-        super(message, rootCause);
-      }
-
-      public Invalid(Throwable rootCause) {
-        super(rootCause);
-      }
-
+    public InvalidElement() {
+      super();
     }
-
-    public static class InvalidTagName extends Invalid {
-
-      public InvalidTagName() {
-        super();
-      }
-
-      public InvalidTagName(String message) {
-        super(message);
-      }
-
-      public InvalidTagName(String message, Throwable rootCause) {
-        super(message, rootCause);
-      }
-
-      public InvalidTagName(Throwable rootCause) {
-        super(rootCause);
-      }
-
+  
+    public InvalidElement(String message) {
+      super(message);
     }
-
-    /**
-     * Invalid Input Type Exception
-     *
-     * @author ryan131
-     * @since Nov 13, 2014, 2:07:55 PM
-     */
-    public static class InvalidInput extends Invalid {
-
-      public InvalidInput() {
-        super();
-      }
-
-      public InvalidInput(String message) {
-        super(message);
-      }
-
-      public InvalidInput(String message, Throwable rootCause) {
-        super(message, rootCause);
-      }
-
-      public InvalidInput(Throwable rootCause) {
-        super(rootCause);
-      }
-
+  
+    public InvalidElement(String message, Throwable rootCause) {
+      super(message, rootCause);
     }
+  
+    public InvalidElement(Throwable rootCause) {
+      super(rootCause);
+    }
+  
+  }
 
+  public static class InvalidTagName extends InvalidElement {
+  
+    public InvalidTagName() {
+      super();
+    }
+  
+    public InvalidTagName(String message) {
+      super(message);
+    }
+  
+    public InvalidTagName(String message, Throwable rootCause) {
+      super(message, rootCause);
+    }
+  
+    public InvalidTagName(Throwable rootCause) {
+      super(rootCause);
+    }
+  
+  }
+
+  /**
+   * Invalid Input Type Exception
+   *
+   * @author ryan131
+   * @since Nov 13, 2014, 2:07:55 PM
+   */
+  public static class InvalidInput extends InvalidElement {
+  
+    public InvalidInput() {
+      super();
+    }
+  
+    public InvalidInput(String message) {
+      super(message);
+    }
+  
+    public InvalidInput(String message, Throwable rootCause) {
+      super(message, rootCause);
+    }
+  
+    public InvalidInput(Throwable rootCause) {
+      super(rootCause);
+    }
+  
   }
 
 }
