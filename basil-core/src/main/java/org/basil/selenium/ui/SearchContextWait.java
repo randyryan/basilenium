@@ -4,9 +4,9 @@
 
 package org.basil.selenium.ui;
 
-import static org.basil.Config.Value.WAIT_INTERVAL;
-import static org.basil.Config.Value.WAIT_NOT_FOUND;
-import static org.basil.Config.Value.WAIT_TIMEOUT;
+import static org.basil.Config.WAIT_INTERVAL;
+import static org.basil.Config.WAIT_NOT_FOUND;
+import static org.basil.Config.WAIT_TIMEOUT;
 import static org.basil.selenium.ui.SearchContextWait.FluentWaitAdapter.adapt;
 
 import java.util.List;

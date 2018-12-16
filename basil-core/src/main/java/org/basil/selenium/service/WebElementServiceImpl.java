@@ -595,9 +595,9 @@ public class WebElementServiceImpl implements WebElementService {
     }
 
     public static boolean isEnabled(WebElement element) {
-      if (Config.Value.WEB_ELEMENT_ENABLE_LATENCY > 0) {
+      if (Config.WEB_ELEMENT_ENABLE_LATENCY > 0) {
         try {
-          Thread.sleep(Config.Value.WEB_ELEMENT_ENABLE_LATENCY);
+          Thread.sleep(Config.WEB_ELEMENT_ENABLE_LATENCY);
         } catch (InterruptedException ignored) {}
       }
       boolean enabled = element.isDisplayed() && element.isEnabled();
@@ -748,9 +748,9 @@ public class WebElementServiceImpl implements WebElementService {
   static final class ElementValidator {
     private ElementValidator() {}
 
-    private static final boolean THROW_EXCEPTION = Config.Value.WEB_ELEMENT_VALIDATION_EXCEPTION;
-    private static final boolean VALIDATE_BUTTONS = // TODO [Basil] Improve the handling
-            Config.Value.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.indexOf("button") == -1;
+    private static final boolean THROW_EXCEPTION = Config.WEB_ELEMENT_VALIDATION_EXCEPTION;
+    private static final boolean VALIDATE_BUTTONS =
+            Config.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.indexOf("button") == -1;
 
     private static void reportInvalid(WebElement actual, String expected) {
       if (THROW_EXCEPTION) {

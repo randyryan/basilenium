@@ -5,7 +5,7 @@
 package org.basil.selenium.ui;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.basil.Config.Value.WEB_ELEMENT_LOADING_UNAVAILABLE_AS_IDLE;
+import static org.basil.Config.WEB_ELEMENT_LOADING_UNAVAILABLE_AS_IDLE;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;

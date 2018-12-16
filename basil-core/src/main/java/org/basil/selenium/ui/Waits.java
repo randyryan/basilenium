@@ -18,7 +18,7 @@ public final class Waits {
   private Waits() {}
 
   public static WebDriverWait getWebDriverWait(WebDriver driver) {
-    return new WebDriverWait(driver, Config.Value.WEB_DRIVER_WAIT_TIMEOUT);
+    return new WebDriverWait(driver, Config.WEB_DRIVER_WAIT_TIMEOUT);
   }
 
 }

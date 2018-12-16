@@ -204,7 +204,7 @@ public abstract class Dijit extends BasilElement {
 
     WebElement textBox = spinner.findElement(
         By.cssSelector("input[role='spinbutton']"));
-    double initialValue = WebElementUtil.value(textBox).asDouble();
+    double initialValue = WebElementUtil.getValue(textBox).toDouble();
 
     // Get up arrow and down arrow
   
@@ -217,7 +217,7 @@ public abstract class Dijit extends BasilElement {
 
     WebElement upOrDown = initialValue < targetValue ? upArrow : downArrow;
 
-    while (WebElementUtil.value(textBox).asDouble() != targetValue) {
+    while (WebElementUtil.getValue(textBox).toDouble() != targetValue) {
         WebElementUtil.clickButton(upOrDown);
       try { Thread.sleep(50); }
       catch (InterruptedException ignored) {}
@@ -497,7 +497,7 @@ public abstract class Dijit extends BasilElement {
     }
 
     public WebElementService.ValueConverter getValue() {
-      return WebElementUtil.value(getWidget());
+      return WebElementUtil.getValue(getWidget());
     }
 
   }
@@ -613,11 +613,11 @@ public abstract class Dijit extends BasilElement {
     }
 
     public void spin(double value) {
-      double current = getValue().asDouble();
+      double current = getValue().toDouble();
       WebElement arrowButton = current < value ? dijitUpArrowButton() : dijitDownArrowButton();
       while (current != value) {
         arrowButton.click();
-        current = getValue().asDouble();
+        current = getValue().toDouble();
       }
     }
 
@@ -725,7 +725,7 @@ public abstract class Dijit extends BasilElement {
     }
 
     public WebElementService.ValueConverter getValue() {
-      return WebElementUtil.value(getWidget());
+      return WebElementUtil.getValue(getWidget());
     }
 
   }

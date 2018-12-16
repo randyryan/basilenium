@@ -494,7 +494,7 @@ public final class ExtendedConditions {
   public static ExpectedCondition<WebElement> elementToBeInteractible(final By locator) {
     ExpectedCondition<WebElement> ec = new ExpectedCondition<WebElement>() {
       public ExpectedCondition<WebElement> expectedPrecondition =
-          Config.Value.WEB_ELEMENT_INTERACTIBILITY_PRECONDITION.get(locator);
+          Config.WEB_ELEMENT_INTERACTIBILITY_PRECONDITION.get(locator);
 
       @Override
       public WebElement apply(WebDriver driver) {
@@ -529,7 +529,7 @@ public final class ExtendedConditions {
   public static ExpectedCondition<WebElement> elementToBeInteractible(final WebElement element) {
     ExpectedCondition<WebElement> ec = new ExpectedCondition<WebElement>() {
       public ExpectedCondition<WebElement> expectedPrecondition =
-          Config.Value.WEB_ELEMENT_INTERACTIBILITY_PRECONDITION.get(element);
+          Config.WEB_ELEMENT_INTERACTIBILITY_PRECONDITION.get(element);
 
       @Override
       public WebElement apply(WebDriver driver) {

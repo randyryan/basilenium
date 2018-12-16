@@ -40,7 +40,7 @@ public class DriverFactoryTest extends TestCase {
 
     Assert.assertTrue(wait != null);
 
-    if (!Config.Value.WEB_DRIVER_TYPE.equals(DriverType.SESSION_REUSABLE_REMOTE)) {
+    if (!Config.WEB_DRIVER_TYPE.equals(DriverType.SESSION_REUSABLE_REMOTE)) {
       driver.close();
     }
   }

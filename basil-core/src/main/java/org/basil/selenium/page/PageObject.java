@@ -4,7 +4,7 @@
 
 package org.basil.selenium.page;
 
-import static org.basil.Config.Value.PAGE_OBJECT_LOCATE_TIMEOUT;
+import static org.basil.Config.PAGE_OBJECT_LOCATE_TIMEOUT;
 
 import org.basil.Config;
 import org.basil.selenium.Basil;
@@ -307,19 +307,19 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
       StringBuilder message = new StringBuilder();
 
       message.append(String.format("[%s @ %s] initialized", name, pageObject.getId()));
-      if (Config.Value.PAGE_OBJECT_TIMER_31S) {
+      if (Config.PAGE_OBJECT_TIMER_31S) {
         try {
           Thread.sleep(31);
           totalUsed += 31;
         } catch (InterruptedException ie) {}
       }
-      if (Config.Value.PAGE_OBJECT_TIMER_STYLE.equals(TimerStyle.CONCISE)) {
+      if (Config.PAGE_OBJECT_TIMER_STYLE.equals(TimerStyle.CONCISE)) {
         message.append(String.format(" in %d ms", totalUsed));
       }
-      if (Config.Value.PAGE_OBJECT_TIMER_STYLE.equals(TimerStyle.VERBOSE)) {
+      if (Config.PAGE_OBJECT_TIMER_STYLE.equals(TimerStyle.VERBOSE)) {
         message.append(String.format(
             " in %d ms (token: %d ms elements: %d ms", totalUsed, tokenUsed, elementUsed));
-        if (Config.Value.PAGE_OBJECT_TIMER_31S) {
+        if (Config.PAGE_OBJECT_TIMER_31S) {
           message.append(" idle: 31 ms");
         }
         message.append(")");

@@ -86,64 +86,60 @@ public interface Config {
 
   }
 
-  public static class Value {
+  // Browser
 
-    // Browser
+  BrowserType BROWSER_TYPE = DriverUtil.getBrowserType(PropertyUtil.getString(Key.BROWSER_TYPE));
 
-    public static final BrowserType BROWSER_TYPE = DriverUtil.getBrowserType(PropertyUtil.getString(Key.BROWSER_TYPE));
- 
-    public static boolean BROWSER_WINDOW_MAXIMIZED = PropertyUtil.getBoolean(Key.BROWSER_WINDOW_MAXIMIZED);
+  boolean BROWSER_WINDOW_MAXIMIZED = PropertyUtil.getBoolean(Key.BROWSER_WINDOW_MAXIMIZED);
 
-    public static Dimension BROWSER_WINDOW_DIMENSION = DriverUtil.getBrowserSize(PropertyUtil.getIntArray(Key.BROWSER_WINDOW_DIMENSION));
+  Dimension BROWSER_WINDOW_DIMENSION = DriverUtil.getBrowserSize(PropertyUtil.getIntArray(Key.BROWSER_WINDOW_DIMENSION));
 
-    // WebDriver
+  // WebDriver
 
-    public static final DriverType WEB_DRIVER_TYPE = DriverUtil.getDriverType(PropertyUtil.getString(Key.WEB_DRIVER_TYPE));
+  DriverType WEB_DRIVER_TYPE = DriverUtil.getDriverType(PropertyUtil.getString(Key.WEB_DRIVER_TYPE));
 
-    public static final URL WEB_DRIVER_REMOTE_URL = URLs.fromStringSilently(PropertyUtil.getString(Key.WEB_DRIVER_REMOTE_URL));
+  URL WEB_DRIVER_REMOTE_URL = URLs.fromStringSilently(PropertyUtil.getString(Key.WEB_DRIVER_REMOTE_URL));
 
-    public static final String WEB_DRIVER_EXECUTABLE_CHROME = PropertyUtil.getString(Key.WEB_DRIVER_EXECUTABLE_CHROME);
+  String WEB_DRIVER_EXECUTABLE_CHROME = PropertyUtil.getString(Key.WEB_DRIVER_EXECUTABLE_CHROME);
 
-    public static final String WEB_DRIVER_EXECUTABLE_IE = PropertyUtil.getString(Key.WEB_DRIVER_EXECUTABLE_IE);
+  String WEB_DRIVER_EXECUTABLE_IE = PropertyUtil.getString(Key.WEB_DRIVER_EXECUTABLE_IE);
 
-    // WebDriver > Wait
+  // WebDriver > Wait
 
-    public static long WEB_DRIVER_WAIT_TIMEOUT = PropertyUtil.getLong(Key.WEB_DRIVER_WAIT_TIMEOUT);
+  long WEB_DRIVER_WAIT_TIMEOUT = PropertyUtil.getLong(Key.WEB_DRIVER_WAIT_TIMEOUT);
 
-    public static long WEB_DRIVER_WAIT_POLL = PropertyUtil.getLong(Key.WEB_DRIVER_WAIT_POLL);
+  long WEB_DRIVER_WAIT_POLL = PropertyUtil.getLong(Key.WEB_DRIVER_WAIT_POLL);
 
-    public static final long WEB_DRIVER_WAIT_UTILITY = PropertyUtil.getLong(Key.WEB_DRIVER_WAIT_UTILITY);
+  long WEB_DRIVER_WAIT_UTILITY = PropertyUtil.getLong(Key.WEB_DRIVER_WAIT_UTILITY);
 
-    // WebElement
+  // WebElement
 
-    public static final long WEB_ELEMENT_ENABLE_LATENCY = PropertyUtil.getLong(Key.WEB_ELEMENT_ENABLE_LATENCY);
+  long WEB_ELEMENT_ENABLE_LATENCY = PropertyUtil.getLong(Key.WEB_ELEMENT_ENABLE_LATENCY);
 
-    public static final boolean WEB_ELEMENT_VALIDATION_EXCEPTION = Booleans.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_VALIDATION_EXCEPTION));
+  boolean WEB_ELEMENT_VALIDATION_EXCEPTION = Booleans.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_VALIDATION_EXCEPTION));
 
-    public static final List<String> WEB_ELEMENT_VALIDATION_IGNORED_TYPES = PropertyUtil.getStringList(Key.WEB_ELEMENT_VALIDATION_IGNORED_TYPES);
+  List<String> WEB_ELEMENT_VALIDATION_IGNORED_TYPES = PropertyUtil.getStringList(Key.WEB_ELEMENT_VALIDATION_IGNORED_TYPES);
 
-    public static final Precondition WEB_ELEMENT_INTERACTIBILITY_PRECONDITION = Precondition.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_INTERACTIBILITY_PRECONDITION));
+  Precondition WEB_ELEMENT_INTERACTIBILITY_PRECONDITION = Precondition.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_INTERACTIBILITY_PRECONDITION));
 
-    public static final boolean WEB_ELEMENT_LOADING_UNAVAILABLE_AS_IDLE = Booleans.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_LOADING_UNAVAILABLE_AS_IDLE));
+  boolean WEB_ELEMENT_LOADING_UNAVAILABLE_AS_IDLE = Booleans.fromString(PropertyUtil.getString(Key.WEB_ELEMENT_LOADING_UNAVAILABLE_AS_IDLE));
 
-    // PageObject
+  // PageObject
 
-    public static final long PAGE_OBJECT_LOCATE_TIMEOUT = PropertyUtil.getLong(Key.PAGE_OBJECT_LOCATE_TIMEOUT);
+  long PAGE_OBJECT_LOCATE_TIMEOUT = PropertyUtil.getLong(Key.PAGE_OBJECT_LOCATE_TIMEOUT);
 
-    public static final boolean PAGE_OBJECT_LOCATE_BY_ID = PropertyUtil.getBoolean(Key.PAGE_OBJECT_LOCATE_BY_ID);
+  boolean PAGE_OBJECT_LOCATE_BY_ID = PropertyUtil.getBoolean(Key.PAGE_OBJECT_LOCATE_BY_ID);
 
-    public static final TimerStyle PAGE_OBJECT_TIMER_STYLE = TimerStyle.fromText(PropertyUtil.getString(Key.PAGE_OBJECT_TIMER_STYLE));
+  TimerStyle PAGE_OBJECT_TIMER_STYLE = TimerStyle.fromText(PropertyUtil.getString(Key.PAGE_OBJECT_TIMER_STYLE));
 
-    public static final boolean PAGE_OBJECT_TIMER_31S = Booleans.fromString(PropertyUtil.getString(Key.PAGE_OBJECT_TIMER_31S));
+  boolean PAGE_OBJECT_TIMER_31S = Booleans.fromString(PropertyUtil.getString(Key.PAGE_OBJECT_TIMER_31S));
 
-    // SearchContextWait
+  // SearchContextWait
 
-    public static final long WAIT_INTERVAL = PropertyUtil.getLong(Key.WAIT_INTERVAL);
+  long WAIT_INTERVAL = PropertyUtil.getLong(Key.WAIT_INTERVAL);
 
-    public static final long WAIT_TIMEOUT = PropertyUtil.getLong(Key.WAIT_TIMEOUT);
+  long WAIT_TIMEOUT = PropertyUtil.getLong(Key.WAIT_TIMEOUT);
 
-    public static final NotFound WAIT_NOT_FOUND = NotFound.fromString(PropertyUtil.getString(Key.WAIT_NOT_FOUND));
-
-  }
+  NotFound WAIT_NOT_FOUND = NotFound.fromString(PropertyUtil.getString(Key.WAIT_NOT_FOUND));
 
 }

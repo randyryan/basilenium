@@ -23,24 +23,24 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public final class DriverFactory {
   private DriverFactory() {}
 
-  private static final BrowserType BROWSER_TYPE = Config.Value.BROWSER_TYPE;
+  private static final BrowserType BROWSER_TYPE = Config.BROWSER_TYPE;
 
-  private static Dimension BROWSER_DIMENSION = Config.Value.BROWSER_WINDOW_DIMENSION;
+  private static Dimension BROWSER_DIMENSION = Config.BROWSER_WINDOW_DIMENSION;
 
-  private static boolean BROWSER_MAXIMIZED = Config.Value.BROWSER_WINDOW_MAXIMIZED;
+  private static boolean BROWSER_MAXIMIZED = Config.BROWSER_WINDOW_MAXIMIZED;
 
   private static final Capabilities CAPABILITIES = DriverUtil.getCapabilities(BROWSER_TYPE);
 
-  private static final DriverType DRIVER_TYPE = Config.Value.WEB_DRIVER_TYPE;
+  private static final DriverType DRIVER_TYPE = Config.WEB_DRIVER_TYPE;
 
-  private static final URL REMOTE_ADDRESS = Config.Value.WEB_DRIVER_REMOTE_URL;
+  private static final URL REMOTE_ADDRESS = Config.WEB_DRIVER_REMOTE_URL;
 
   static {
-    System.setProperty("webdriver.chrome.driver", Config.Value.WEB_DRIVER_EXECUTABLE_CHROME);
-    System.setProperty("webdriver.ie.driver", Config.Value.WEB_DRIVER_EXECUTABLE_IE);
+    System.setProperty("webdriver.chrome.driver", Config.WEB_DRIVER_EXECUTABLE_CHROME);
+    System.setProperty("webdriver.ie.driver", Config.WEB_DRIVER_EXECUTABLE_IE);
   }
 
-  private static final long WAIT_POLL_INTERVAL = Config.Value.WEB_DRIVER_WAIT_POLL;
+  private static final long WAIT_POLL_INTERVAL = Config.WEB_DRIVER_WAIT_POLL;
 
   private static WebDriver driverOfChoice;
 
