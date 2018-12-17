@@ -57,6 +57,9 @@ public abstract class BasilException extends RuntimeException {
 
   /**
    * The ValidationException for invalid WebElements.
+   *
+   * @author ryan131
+   * @since Nov 13, 2014, 2:07:55 PM
    */
   public static class InvalidElement extends Element {
 
@@ -79,49 +82,43 @@ public abstract class BasilException extends RuntimeException {
   }
 
   public static class InvalidTagName extends InvalidElement {
-  
+
     public InvalidTagName() {
       super();
     }
-  
+
     public InvalidTagName(String message) {
       super(message);
     }
-  
+
     public InvalidTagName(String message, Throwable rootCause) {
       super(message, rootCause);
     }
-  
+
     public InvalidTagName(Throwable rootCause) {
       super(rootCause);
     }
-  
+
   }
 
-  /**
-   * Invalid Input Type Exception
-   *
-   * @author ryan131
-   * @since Nov 13, 2014, 2:07:55 PM
-   */
-  public static class InvalidInput extends InvalidElement {
-  
-    public InvalidInput() {
+  public static class InvalidAttribute extends InvalidElement {
+
+    public InvalidAttribute() {
       super();
     }
-  
-    public InvalidInput(String message) {
+
+    public InvalidAttribute(String message) {
       super(message);
     }
-  
-    public InvalidInput(String message, Throwable rootCause) {
+
+    public InvalidAttribute(String message, Throwable rootCause) {
       super(message, rootCause);
     }
-  
-    public InvalidInput(Throwable rootCause) {
+
+    public InvalidAttribute(Throwable rootCause) {
       super(rootCause);
     }
-  
+
   }
 
 }

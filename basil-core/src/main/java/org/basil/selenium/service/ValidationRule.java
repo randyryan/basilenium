@@ -5,6 +5,7 @@
 package org.basil.selenium.service;
 
 import org.basil.selenium.BasilException;
+import org.basil.selenium.BasilException.InvalidAttribute;
 import org.basil.selenium.BasilException.InvalidElement;
 import org.basil.selenium.BasilException.InvalidTagName;
 import org.openqa.selenium.WebElement;
@@ -46,7 +47,7 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
         if (input.getAttribute(attributeName) != null) {
           return null;
         }
-        return new InvalidElement("Attribute \"" + attributeName + "\" is expected.");
+        return new InvalidAttribute("Attribute \"" + attributeName + "\" is expected.");
       }
 
       @Override
@@ -66,7 +67,7 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
         } else if (Strings.nullToEmpty(value).equals(attributeValue)) {
           return null;
         }
-        return new InvalidElement(
+        return new InvalidAttribute(
             "Attribute \"" + attributeName + "=" + attributeValue + "\" is expected.");
       }
 
@@ -84,7 +85,7 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
         if (input.getAttribute("class").contains(className)) {
           return null;
         }
-        return new InvalidElement("Class \"" + className + "\" is expected.");
+        return new InvalidAttribute("Class \"" + className + "\" is expected.");
       }
 
       @Override
@@ -156,7 +157,7 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
 
       @Override
       public String getType() {
-        return "input-text";
+        return "input-checkbox";
       }
     };
   }
@@ -290,6 +291,34 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
       @Override
       public String getType() {
         return "input-text";
+      }
+    };
+  }
+
+  static ValidationRule isButton() {
+    return new ValidationRule() {
+      @Override
+      public InvalidElement apply(WebElement input) {
+        return isTag("button").apply(input);
+      }
+
+      @Override
+      public String getType() {
+        return "button";
+      }
+    };
+  }
+
+  static ValidationRule isLink() {
+    return new ValidationRule() {
+      @Override
+      public InvalidElement apply(WebElement input) {
+        return isTag("a").apply(input);
+      }
+
+      @Override
+      public String getType() {
+        return "link";
       }
     };
   }

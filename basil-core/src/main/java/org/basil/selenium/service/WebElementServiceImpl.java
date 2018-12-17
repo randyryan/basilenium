@@ -29,7 +29,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -303,18 +302,24 @@ public class WebElementServiceImpl implements WebElementService {
 
   // Validation services
 
-  public boolean validate(final WebElement element, ValidationRule rule) {
+  public WebElement validate(final WebElement element, ValidationRule rule) {
     if (!Config.WEB_ELEMENT_VALIDATION_ENABLED) {
-      return true;
+      return element;
     }
     if (Config.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.contains(rule.getType())) {
-      return true;
+      return element;
     }
     BasilException.InvalidElement validationException = rule.apply(element);
-    if (Config.WEB_ELEMENT_VALIDATION_EXCEPTION && validationException != null) {
-      throw validationException;
+    if (validationException != null) {
+      String message = "Element: " + element + " did not succeed validation: " +
+          validationException.getMessage();
+      if (Config.WEB_ELEMENT_VALIDATION_EXCEPTION) {
+        throw new BasilException.InvalidElement(message, validationException);
+      } else {
+        logger.warn(message);
+      }
     }
-    return validationException == null;
+    return element;
   }
 
   @Override

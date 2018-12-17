@@ -149,7 +149,7 @@ public interface WebElementService {
 
   // Validation services
 
-  boolean validate(WebElement element, ValidationRule rule) throws BasilException.InvalidElement;
+  WebElement validate(WebElement element, ValidationRule rule) throws BasilException.InvalidElement;
 
   @Deprecated
   boolean validateTag(WebElement element, String tag);

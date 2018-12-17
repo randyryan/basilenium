@@ -314,7 +314,7 @@ public final class WebElementUtil {
 
   // Validation services
 
-  public static boolean validate(WebElement element, ValidationRule rule) {
+  public static WebElement validate(WebElement element, ValidationRule rule) {
     return service.validate(element, rule);
   }
 
