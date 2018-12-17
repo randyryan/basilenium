@@ -295,6 +295,48 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
     };
   }
 
+  static ValidationRule isTextarea() {
+    return new ValidationRule() {
+      @Override
+      public InvalidElement apply(WebElement input) {
+        return isTag("textarea").apply(input);
+      }
+
+      @Override
+      public String getType() {
+        return "textarea";
+      }
+    };
+  }
+
+  static ValidationRule isTextualInput() {
+    return new ValidationRule() {
+      @Override
+      public InvalidElement apply(WebElement input) {
+        // TODO Improve efficiency
+        InvalidElement isTextBox = isInputTextBox().apply(input);
+        InvalidElement isNumber = isInputNumber().apply(input);
+        InvalidElement isPassword = isInputPassword().apply(input);
+        InvalidElement isTextarea = isTextarea().apply(input);
+        if (isTextBox != null) {
+          return isTextBox;
+        }
+        if (isNumber != null) {
+          return isNumber;
+        }
+        if (isPassword != null) {
+          return isPassword;
+        }
+        return isTextarea;
+      }
+
+      @Override
+      public String getType() {
+        return "textual-input";
+      }
+    };
+  }
+
   static ValidationRule isButton() {
     return new ValidationRule() {
       @Override

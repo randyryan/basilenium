@@ -14,11 +14,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -152,10 +150,54 @@ public final class WebElementUtil {
     return findLabel(label, context).getAttribute("for");
   }
 
-  // WebElement standard services
+  // WebElement Standard Services
 
-  public static <X> X getScreenshotAs(WebElement element, OutputType<X> target) throws WebDriverException {
-    return service.getScreenshotAs(element, target);
+  // WebElement Click Services
+
+  public static void click(WebElement element) {
+    service.click(element);
+  }
+
+  public static void clickByJs(WebElement element) {
+    service.clickByJs(element);
+  }
+
+  public static void clickByJs(JavascriptExecutor executor, WebElement element) {
+    service.clickByJs(element, executor);
+  }
+
+  public static void clickByActions(WebElement element) {
+    service.clickByActions(element);
+  }
+
+  public static void clickByActionsHover(WebElement element) {
+    service.clickByActionsHover(element);
+  }
+
+  public static void clickLink(WebElement link) {
+    service.clickLink(link);
+  }
+
+  public static void clickButton(WebElement button) {
+    service.clickButton(button);
+  }
+
+  @Deprecated
+  public static void checkCheckBox(WebElement checkBox) {
+    service.checkCheckBox(checkBox);
+  }
+
+  @Deprecated
+  public static void uncheckCheckBox(WebElement checkBox) {
+    service.uncheckCheckBox(checkBox);
+  }
+
+  public static void selectRadioButton(WebElement radioButton) {
+    service.selectRadioButton(radioButton);
+  }
+
+  public static void selectElements(Iterable<WebElement> elements) {
+    service.selectElements(elements);
   }
 
   public static void submit(WebElement element) {
@@ -174,43 +216,20 @@ public final class WebElementUtil {
     return service.getTagName(element);
   }
 
+  @Deprecated
+  public static String getTag(WebElement element) {
+    return service.getTag(element);
+  }
+
+  // WebElement Attribute Services
+
   public static String getAttribute(WebElement element, String name) {
     return service.getAttribute(element, name);
   }
 
-  public static boolean isSelected(WebElement element) {
-    return service.isSelected(element);
+  public static boolean hasAttribute(WebElement element, String attributeName) {
+    return service.hasAttribute(element, attributeName);
   }
-
-  public static boolean isEnabled(WebElement element) {
-    return service.isEnabled(element);
-  }
-
-  public static String getText(WebElement element) {
-    return service.getText(element);
-  }
-
-  public static boolean isDisplayed(WebElement element) {
-    return service.isDisplayed(element);
-  }
-
-  public static Point getLocation(WebElement element) {
-    return service.getLocation(element);
-  }
-
-  public static Dimension getSize(WebElement element) {
-    return service.getSize(element);
-  }
-
-  public static Rectangle getRect(WebElement element) {
-    return service.getRect(element);
-  }
-
-  public static String getCssValue(WebElement element, String propertyName) {
-    return service.getCssValue(element, propertyName);
-  }
-
-  // WebElement attribute services
 
   @Deprecated
   public static String getAttr(WebElement element, String attrName) {
@@ -220,10 +239,6 @@ public final class WebElementUtil {
   @Deprecated
   public static boolean hasAttr(WebElement element, String attrName) {
     return service.hasAttr(element, attrName);
-  }
-
-  public static boolean hasAttribute(WebElement element, String attributeName) {
-    return service.hasAttribute(element, attributeName);
   }
 
   public static String getId(WebElement element) {
@@ -270,37 +285,22 @@ public final class WebElementUtil {
     return service.getOuterHTML(element);
   }
 
-  // WebElement property services
-
-  @Deprecated
-  public static String getTag(WebElement element) {
-    return service.getTag(element);
+  public static boolean isSelected(WebElement element) {
+    return service.isSelected(element);
   }
 
-//  public static String getText(WebElement element) {
-//    return service.getText(element);
-//  }
+  // WebElement Interactability Services
 
-  public static List<String> getText(List<WebElement> elements) {
-    return service.getText(elements);
+  public static boolean isEnabled(WebElement element) {
+    return service.isEnabled(element);
   }
-
-  @Deprecated
-  public static String getXPath(WebElement element) {
-    return service.getXPath(element);
-  }
-
-  @Deprecated
-  public static String getXPath(WebElement element, String xpathExpression) {
-    return service.getXPath(element, xpathExpression);
-  }
-
-//  public static boolean isEnabled(WebElement element) {
-//    return service.isEnabled(element);
-//  }
 
   public static boolean isDisabled(WebElement element) {
     return service.isDisabled(element);
+  }
+
+  public static boolean isReadonly(WebElement element) {
+    return service.isReadonly(element);
   }
 
   public static boolean isInteractible(WebElement element) {
@@ -312,68 +312,63 @@ public final class WebElementUtil {
     return service.getInteractible(wait, element);
   }
 
-  // Validation services
+  // WebElement Text Services
+
+  public static String getText(WebElement element) {
+    return service.getText(element);
+  }
+
+  public static List<String> getText(List<WebElement> elements) {
+    return service.getText(elements);
+  }
+
+  @Deprecated
+  public static void inputText(WebElement element, String text) {
+    service.inputText(element, text);
+  }
+
+  public static boolean isDisplayed(WebElement element) {
+    return service.isDisplayed(element);
+  }
+
+  public static Point getLocation(WebElement element) {
+    return service.getLocation(element);
+  }
+
+  public static Dimension getSize(WebElement element) {
+    return service.getSize(element);
+  }
+
+  public static Rectangle getRect(WebElement element) {
+    return service.getRect(element);
+  }
+
+  public static String getCssValue(WebElement element, String propertyName) {
+    return service.getCssValue(element, propertyName);
+  }
+
+  // WebElement Property Services
+
+  @Deprecated
+  public static String getXPath(WebElement element) {
+    return service.getXPath(element);
+  }
+
+  @Deprecated
+  public static String getXPath(WebElement element, String xpathExpression) {
+    return service.getXPath(element, xpathExpression);
+  }
+
+  // WebElement Validation Services
 
   public static WebElement validate(WebElement element, ValidationRule rule) {
     return service.validate(element, rule);
   }
 
-  /**
-   * Temporarily allow this method to be accessed here, 'till there's a new set of validation API.
-   */
+  // TODO Remove this method
   @Deprecated
   public static boolean validateTagAndClass(WebElement element, String tag, String clazz) {
     return WebElementServiceImpl.ElementValidator.validateTagAndClass(element, tag, clazz);
-  }
-
-  // Interaction services
-
-  public static void click(WebElement element) {
-    service.click(element);
-  }
-
-  public static void jsClick(WebElement element) {
-    service.jsClick(element);
-  }
-
-  public static void jsClick(JavascriptExecutor executor, WebElement element) {
-    service.jsClick(executor, element);
-  }
-
-  public static void actionsClick(WebElement element) {
-    service.actionsClick(element);
-  }
-
-  public static void actionsHoverClick(WebElement element) {
-    service.actionsHoverClick(element);
-  }
-
-  public static void clickLink(WebElement link) {
-    service.clickLink(link);
-  }
-
-  public static void clickButton(WebElement button) {
-    service.clickButton(button);
-  }
-
-  public static void checkCheckBox(WebElement checkBox) {
-    service.checkCheckBox(checkBox);
-  }
-
-  public static void uncheckCheckBox(WebElement checkBox) {
-    service.uncheckCheckBox(checkBox);
-  }
-
-  public static void selectRadioButton(WebElement radioButton) {
-    service.selectRadioButton(radioButton);
-  }
-
-  public static void selectElements(Iterable<WebElement> elements) {
-    service.selectElements(elements);
-  }
-
-  public static void inputText(WebElement element, String text) {
-    service.inputText(element, text);
   }
 
   // Neighboring elements services

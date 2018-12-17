@@ -4,7 +4,6 @@
 
 package org.basil.selenium.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,18 +17,18 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spearmint.util.Sleeper;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -92,16 +91,94 @@ public class WebElementServiceImpl implements WebElementService {
     return context.findElements(locator);
   }
 
-  // WebElement standard services
+  // -------------------------------------------------------------------------------------------- //
+  //                                                                                              //
+  //     WebElement Standard Services                                                             //
+  //     ----------------------------                                                             //
+  //     Services for methods declared in the WebElement interface and some of the most common    //
+  //     usages and derived                                                                       //
+  //                                                                                              //
+  // -------------------------------------------------------------------------------------------- //
 
-  @Override
-  public <X> X getScreenshotAs(WebElement element, OutputType<X> target) throws WebDriverException {
-    return element.getScreenshotAs(target);
-  }
+  // WebElement Click Services
 
   @Override
   public void click(WebElement element) {
-    ElementActions.click(element);
+    element.click();
+  }
+
+  @Override
+  public void clickByJs(WebElement element) {
+    // TODO Use not ServiceContext to be stateless
+    clickByJs(element, ServiceContext.getJsExecutor());
+  }
+
+  @Override
+  public void clickByJs(WebElement element, JavascriptExecutor executor) {
+    executor.executeScript("arguments[0].click();", element);
+  }
+
+  @Override
+  public void clickByActions(WebElement element) {
+    // TODO Use not ServiceContext to be stateless
+    new Actions(ServiceContext.getDriver()).click(element).click().perform();
+  }
+
+  @Override
+  public void clickByActionsHover(WebElement element) {
+    // TODO Use not ServiceContext to be stateless
+    new Actions(ServiceContext.getDriver()).moveToElement(element).click().perform();
+  }
+
+  @Override
+  public void clickLink(WebElement link) {
+    click(validate(link, ValidationRule.isLink()));
+  }
+
+  @Override
+  public void clickButton(WebElement button) {
+    click(validate(button, ValidationRule.isButton()));
+  }
+
+  @Deprecated
+  @Override
+  public void checkCheckBox(WebElement checkBox) {
+    validate(checkBox, ValidationRule.isInputCheckBox());
+    while (!isSelected(checkBox)) {
+      Sleeper.sleep_100_ms();
+      click(checkBox);
+    }
+  }
+
+  @Deprecated
+  @Override
+  public void uncheckCheckBox(WebElement checkBox) {
+    validate(checkBox, ValidationRule.isInputCheckBox());
+    while (isSelected(checkBox)) {
+      Sleeper.sleep_100_ms();
+      click(checkBox);
+    }
+  }
+
+  @Override
+  public void selectRadioButton(WebElement radioButton) {
+    validate(radioButton, ValidationRule.isInputRadioBox());
+    while (!isSelected(radioButton)) {
+      Sleeper.sleep_100_ms();
+      click(radioButton);
+    }
+  }
+
+  @Override
+  public void selectElements(Iterable<WebElement> elements) {
+    Actions actions = new Actions(ServiceContext.getDriver());
+    actions.keyDown(Keys.CONTROL);
+    for (WebElement element : elements) {
+      actions.click(element);
+      Sleeper.sleep_50_ms();
+    }
+    actions.keyUp(Keys.CONTROL);
+    actions.perform();
   }
 
   @Override
@@ -124,9 +201,137 @@ public class WebElementServiceImpl implements WebElementService {
     return element.getTagName();
   }
 
+  @Deprecated
+  @Override
+  public String getTag(WebElement element) {
+    return getTagName(element);
+  }
+
+  // WebElement Attribute Services
+
   @Override
   public String getAttribute(WebElement element, String name) {
     return element.getAttribute(name);
+  }
+
+  @Override
+  public boolean hasAttribute(WebElement element, String attributeName) {
+    return !Strings.isNullOrEmpty(element.getAttribute(attributeName));
+  }
+
+  @Override
+  @Deprecated
+  public String getAttr(WebElement element, String attrName) {
+    return getAttribute(element, attrName);
+  }
+
+  @Override
+  @Deprecated
+  public boolean hasAttr(WebElement element, String attrName) {
+    return hasAttribute(element, attrName);
+  }
+
+  @Override
+  public String getId(WebElement element) {
+    return element.getAttribute("id");
+  }
+
+  @Override
+  public boolean hasId(WebElement element) {
+    return hasAttribute(element, "id");
+  }
+
+  @Override
+  public String getClass(WebElement element) {
+    return element.getAttribute("class");
+  }
+
+  @Override
+  public boolean hasClass(WebElement element, String className) {
+    return getClass(element).toLowerCase().contains(className.toLowerCase());
+  }
+
+  @Override
+  public String getTitle(WebElement element) {
+    return element.getAttribute("title");
+  }
+
+  @Override
+  public boolean hasTitle(WebElement element) {
+    return hasAttribute(element, "title");
+  }
+
+  @Override
+  public String getType(WebElement element) {
+    return element.getAttribute("type");
+  }
+
+  @Override
+  public boolean hasType(WebElement element) {
+    return hasAttribute(element, "type");
+  }
+
+  @Override
+  public ValueConverter getValue(WebElement element) {
+    final String value = Strings.nullToEmpty(element.getAttribute("value"));
+    return new ValueConverter() {
+
+      @Override
+      public boolean toBoolean() {
+        return value.equals("") ? false : Boolean.parseBoolean(value);
+      }
+
+      @Override
+      public byte toByte() {
+        return value.equals("") ? 0 : Byte.parseByte(value);
+      }
+
+      @Override
+      public short toShort() {
+        return value.equals("") ? 0 : Short.parseShort(value);
+      }
+
+      @Override
+      public int toInt() {
+        return value.equals("") ? 0 : Integer.parseInt(value);
+      }
+
+      @Override
+      public long toLong() {
+        return value.equals("") ? 0L : Long.parseLong(value);
+      }
+
+      @Override
+      public float toFloat() {
+        return value.equals("") ? 0.0F : Float.parseFloat(value);
+      }
+
+      @Override
+      public double toDouble() {
+        return value.equals("") ? 0.0D : Double.parseDouble(value);
+      }
+
+      @Override
+      public char[] toChars() {
+        return value.toCharArray();
+      }
+
+      @Override
+      public String toString() {
+        return value;
+      }
+
+    };
+  }
+
+  @Override
+  public String getInnerHTML(WebElement element) {
+    return element.getAttribute("innerHTML");
+  }
+
+  @Override
+  public String getOuterHTML(WebElement element) {
+    return element.getAttribute("outerHTML");
   }
 
   @Override
@@ -134,14 +339,63 @@ public class WebElementServiceImpl implements WebElementService {
     return element.isSelected();
   }
 
+  // WebElement Interactability Services
+
   @Override
   public boolean isEnabled(WebElement element) {
-    return ElementActions.isEnabled(element);
+    if (Config.WEB_ELEMENT_ENABLE_LATENCY > 0) {
+      Sleeper.sleepSilently(Config.WEB_ELEMENT_ENABLE_LATENCY);
+    }
+    return isDisplayed(element) && element.isEnabled() && !isDisabled(element);
   }
 
   @Override
+  public boolean isDisabled(WebElement element) {
+    // This is a method not in the WebElement interface, so it is better to offer
+    // something different rather than simply negates WebElement#isEnabled()
+    return !hasClass(element, "disabled") && !hasAttribute(element, "disabled");
+  }
+
+  @Override
+  public boolean isReadonly(WebElement element) {
+    return hasAttribute(element, "readonly");
+  }
+
+  @Override
+  public boolean isInteractible(WebElement element) {
+    return !isDisabled(element) && !isReadonly(element);
+  }
+
+  @Deprecated
+  @Override
+  public WebElement getInteractible(WebDriverWait wait, WebElement element) {
+    return wait.until(ExtendedConditions.elementToBeInteractible(element));
+  }
+
+  // WebElement Text Services
+
+  @Override
   public String getText(WebElement element) {
-    return ElementActions.textOf(element);
+    return element.getText();
+  }
+
+  @Override
+  public List<String> getText(List<WebElement> elements) {
+    List<String> texts = Lists.newArrayListWithCapacity(elements.size());
+    for (WebElement element : elements) {
+      texts.add(getText(element));
+    }
+    return texts;
+  }
+
+  @Deprecated
+  @Override
+  public void inputText(WebElement element, String text) {
+    validate(element, ValidationRule.isTextualInput());
+    clear(element);
+    if (!Strings.isNullOrEmpty(text)) {
+      sendKeys(element);
+    }
   }
 
   @Override
@@ -169,138 +423,23 @@ public class WebElementServiceImpl implements WebElementService {
     return element.getCssValue(propertyName);
   }
 
-  // WebElement attribute services
+  // WebElement Property Services
 
-  @Override
   @Deprecated
-  public String getAttr(WebElement element, String attrName) {
-    return ElementActions.attrOf(element, attrName);
-  }
-
   @Override
-  @Deprecated
-  public boolean hasAttr(WebElement element, String attrName) {
-    return hasAttribute(element, attrName);
-  }
-
-  @Override
-  public boolean hasAttribute(WebElement element, String attributeName) {
-    return !Strings.isNullOrEmpty(element.getAttribute(attributeName));
-  }
-
-  @Override
-  public String getId(WebElement element) {
-    return ElementActions.idOf(element);
-  }
-
-  @Override
-  public boolean hasId(WebElement element) {
-    return hasAttr(element, "id");
-  }
-
-  @Override
-  public String getClass(WebElement element) {
-    return ElementActions.classOf(element);
-  }
-
-  @Override
-  public boolean hasClass(WebElement element, String className) {
-    return getClass(element).toLowerCase().contains(className.toLowerCase());
-  }
-
-  @Override
-  public String getTitle(WebElement element) {
-    return element.getAttribute("title");
-  }
-
-  @Override
-  public boolean hasTitle(WebElement element) {
-    return hasAttr(element, "title");
-  }
-
-  @Override
-  public String getType(WebElement element) {
-    return ElementActions.typeOf(element);
-  }
-
-  @Override
-  public boolean hasType(WebElement element) {
-    return hasAttr(element, "type");
-  }
-
-  @Override
-  public ValueConverter getValue(WebElement element) {
-    return ElementActions.value(element);
-  }
-
-  @Override
-  public String getInnerHTML(WebElement element) {
-    return element.getAttribute("innerHTML");
-  }
-
-  @Override
-  public String getOuterHTML(WebElement element) {
-    return element.getAttribute("outerHTML");
-  }
-
-  // WebElement property services
-
-  @Override
-  @Deprecated
-  public String getTag(WebElement element) {
-    return ElementActions.tagOf(element);
-  }
-
-  @Override
-  @Deprecated
   public String getXPath(WebElement element) {
     // return ElementActions.xpathOf(element);
     return XPathUtil.getXPath(element);
   }
 
-  @Override
   @Deprecated
+  @Override
   public String getXPath(WebElement element, String xpathExpression) {
     // return ElementActions.xpathOf(element, xpathExpression);
     return XPathUtil.getXPath(element, xpathExpression);
   }
 
-//  @Override
-//  public String getText(WebElement element) {
-//    return ElementActions.textOf(element);
-//  }
-
-  @Override
-  public List<String> getText(List<WebElement> elements) {
-    return ElementActions.textOf(elements);
-  }
-
-//  @Override
-//  public boolean isEnabled(WebElement element) {
-//    return ElementActions.isEnabled(element);
-//  }
-
-  @Override
-  public boolean isDisabled(WebElement element) {
-    return ElementActions.isDisabled(element);
-  }
-
-  @Override
-  public boolean isInteractible(WebElement element) {
-    // ElementActions does not contain such method
-    boolean isDisplayed = element.isDisplayed();
-    boolean isEnabled = element.isEnabled();
-    boolean isEnabledInClass = !hasClass(element, "disabled");
-    return isDisplayed && isEnabled && isEnabledInClass;
-  }
-
-  @Deprecated
-  @Override
-  public WebElement getInteractible(WebDriverWait wait, WebElement element) {
-    return ElementActions.interactible(wait, element);
-  }
-
-  // Validation services
+  // WebElement Validation Services
 
   public WebElement validate(final WebElement element, ValidationRule rule) {
     if (!Config.WEB_ELEMENT_VALIDATION_ENABLED) {
@@ -360,68 +499,6 @@ public class WebElementServiceImpl implements WebElementService {
   @Override
   public boolean validateRadioButton(WebElement radioButton) {
     return ElementValidator.validateRadioButton(radioButton);
-  }
-
-  // Interaction services
-
-//  @Override
-//  public void click(WebElement element) {
-//    ElementActions.click(element);
-//  }
-
-  @Override
-  public void jsClick(WebElement element) {
-    ElementActions.jsClick(element);
-  }
-
-  @Override
-  public void jsClick(JavascriptExecutor executor, WebElement element) {
-    ElementActions.jsClick(executor, element);
-  }
-
-  @Override
-  public void actionsClick(WebElement element) {
-    ElementActions.actionsClick(element);
-  }
-
-  @Override
-  public void actionsHoverClick(WebElement element) {
-    ElementActions.actionsHoverClick(element);
-  }
-
-  @Override
-  public void clickLink(WebElement link) {
-    ElementActions.clickLink(link);
-  }
-
-  @Override
-  public void clickButton(WebElement button) {
-    ElementActions.clickButton(button);
-  }
-
-  @Override
-  public void checkCheckBox(WebElement checkBox) {
-    ElementActions.checkCheckBox(checkBox);
-  }
-
-  @Override
-  public void uncheckCheckBox(WebElement checkBox) {
-    ElementActions.uncheckCheckBox(checkBox);
-  }
-
-  @Override
-  public void selectRadioButton(WebElement radioButton) {
-    ElementActions.selectRadioButton(radioButton);
-  }
-
-  @Override
-  public void selectElements(Iterable<WebElement> elements) {
-    ElementActions.selectElements(elements);
-  }
-
-  @Override
-  public void inputText(WebElement element, String text) {
-    ElementActions.inputText(element, text);
   }
 
   // Neighboring elements services
@@ -516,92 +593,49 @@ public class WebElementServiceImpl implements WebElementService {
 
     // Property
 
+    @Deprecated
     public static String attrOf(WebElement element, String attribute) {
-      return element.getAttribute(attribute);
+      return WebElementUtil.getAttribute(element, attribute);
     }
 
+    @Deprecated
     public static String idOf(WebElement element) {
-      return attrOf(element, "id");
+      return WebElementUtil.getId(element);
     }
 
+    @Deprecated
     public static String classOf(WebElement element) {
-      return attrOf(element, "class");
+      return WebElementUtil.getClass(element);
     }
 
+    @Deprecated
     public static String typeOf(WebElement element) {
-      return attrOf(element, "type");
+      return WebElementUtil.getType(element);
     }
 
+    @Deprecated
     public static String valueOf(WebElement element) {
-      return attrOf(element, "value");
+      return WebElementUtil.getValue(element).toString();
     }
 
+    @Deprecated
     public static ValueConverter value(WebElement element) {
-      final String value = Strings.nullToEmpty(valueOf(element));
-      return new ValueConverter() {
-
-        @Override
-        public boolean toBoolean() {
-          return value.equals("") ? false : Boolean.parseBoolean(value);
-        }
-
-        @Override
-        public byte toByte() {
-          return value.equals("") ? 0 : Byte.parseByte(value);
-        }
-
-        @Override
-        public short toShort() {
-          return value.equals("") ? 0 : Short.parseShort(value);
-        }
-
-        @Override
-        public int toInt() {
-          return value.equals("") ? 0 : Integer.parseInt(value);
-        }
-
-        @Override
-        public long toLong() {
-          return value.equals("") ? 0L : Long.parseLong(value);
-        }
-
-        @Override
-        public float toFloat() {
-          return value.equals("") ? 0.0F : Float.parseFloat(value);
-        }
-
-        @Override
-        public double toDouble() {
-          return value.equals("") ? 0.0D : Double.parseDouble(value);
-        }
-
-        @Override
-        public char[] toChars() {
-          return value.toCharArray();
-        }
-
-        @Override
-        public String toString() {
-          return value;
-        }
-
-      };
+      return WebElementUtil.getValue(element);
     }
 
+    @Deprecated
     public static String tagOf(WebElement element) {
-      return element.getTagName();
+      return WebElementUtil.getTagName(element);
     }
 
+    @Deprecated
     public static String textOf(WebElement element) {
-      return element.getText();
+      return WebElementUtil.getText(element);
     }
 
+    @Deprecated
     public static List<String> textOf(List<WebElement> elements) {
-      List<String> texts = new ArrayList<String>();
-      for (WebElement element : elements) {
-        texts.add(element.getText());
-      }
-      return texts;
+      return WebElementUtil.getText(elements);
     }
 
     @Deprecated
@@ -614,59 +648,63 @@ public class WebElementServiceImpl implements WebElementService {
       return XPathUtil.getXPath(element, xpathExpression);
     }
 
+    @Deprecated
     public static boolean isEnabled(WebElement element) {
-      if (Config.WEB_ELEMENT_ENABLE_LATENCY > 0) {
-        try {
-          Thread.sleep(Config.WEB_ELEMENT_ENABLE_LATENCY);
-        } catch (InterruptedException ignored) {}
-      }
-      boolean enabled = element.isDisplayed() && element.isEnabled();
-      boolean attributeEnabled = !element.getAttribute("class").contains("isable");
-      return enabled && attributeEnabled;
+      return WebElementUtil.isEnabled(element);
     }
 
+    @Deprecated
     public static boolean isDisabled(WebElement element) {
-      return !isEnabled(element);
+      return WebElementUtil.isDisabled(element);
     }
 
+    @Deprecated
     public static WebElement interactible(WebDriverWait wait, WebElement element) {
-      return wait.until(ExtendedConditions.elementToBeInteractible(element));
+      return WebElementUtil.getInteractible(wait, element);
     }
 
     // Interaction
 
+    @Deprecated
     public static void click(WebElement element) {
-      element.click();
+      WebElementUtil.click(element);
     }
 
+    @Deprecated
     public static void jsClick(WebElement element) {
-      jsClick(getJsExecutor(), element);
+      WebElementUtil.clickByJs(element);
     }
 
+    @Deprecated
     public static void jsClick(JavascriptExecutor executor, WebElement element) {
-      executor.executeScript("arguments[0].click();", element);
+      WebElementUtil.clickByJs(executor, element);
     }
 
+    @Deprecated
     public static void actionsClick(WebElement element) {
-      new Actions(getDriver()).click(element).click().perform();
+      WebElementUtil.clickByActions(element);
     }
 
+    @Deprecated
     public static void actionsHoverClick(WebElement element) {
-      new Actions(getDriver()).moveToElement(element).click().perform();
+      WebElementUtil.clickByActionsHover(element);
     }
 
+    @Deprecated
     public static void clickLink(WebElement link) {
       ElementValidator.validateLink(link);
       link = interactible(getWait(), link);
       link.click();
     }
 
+    @Deprecated
     public static void clickButton(WebElement button) {
       ElementValidator.validateButton(button);
       button = interactible(getWait(), button);
       button.click();
     }
 
+    @Deprecated
     public static void checkCheckBox(WebElement checkBox) {
       ElementValidator.validateCheckBox(checkBox);
       checkBox = interactible(getWait(), checkBox);
@@ -675,6 +713,7 @@ public class WebElementServiceImpl implements WebElementService {
       }
     }
 
+    @Deprecated
     public static void uncheckCheckBox(WebElement checkBox) {
       ElementValidator.validateCheckBox(checkBox);
       checkBox = interactible(getWait(), checkBox);
@@ -683,6 +722,7 @@ public class WebElementServiceImpl implements WebElementService {
       }
     }
 
+    @Deprecated
     public static void selectRadioButton(WebElement radioButton) {
       ElementValidator.validateRadioButton(radioButton);
       radioButton = interactible(getWait(), radioButton);
@@ -691,17 +731,12 @@ public class WebElementServiceImpl implements WebElementService {
       }
     }
 
+    @Deprecated
     public static void selectElements(Iterable<WebElement> elements) {
-      Actions actions = new Actions(getDriver());
-      actions.keyDown(Keys.CONTROL);
-      for (WebElement element : elements) {
-        try { actions.click(element); Thread.sleep(50); }
-        catch (InterruptedException ie) {}
-      }
-      actions.keyUp(Keys.CONTROL);
-      actions.perform();
+      WebElementUtil.selectElements(elements);
     }
 
+    @Deprecated
     public static void inputText(WebElement textBox, String text) {
       ElementValidator.validateTextInput(textBox);
       textBox = interactible(getWait(), textBox);
@@ -763,15 +798,14 @@ public class WebElementServiceImpl implements WebElementService {
    * ElementValidator
    *
    * @author ryan131
-   * @since Dec 2, 2013, 19:36:35 PM
-   * @deprecated Moved to and as ValidationRule
+   * @deprecated Use {@link WebElementService#validate(WebElement, ValidationRule)}
    */
   @Deprecated
   static final class ElementValidator {
-    private ElementValidator() {}
+    ElementValidator() {}
 
     private static void reportInvalid(WebElement actual, String expected) {
-      if (THROW_EXCEPTION) {
+      if (ENABLED && THROW_EXCEPTION) {
         String xpath = XPathUtil.getXPath(actual);
         throw new BasilException.InvalidElement(
                 "The element \"" + xpath + "\" is not a valid \"" + expected + "\".");
@@ -779,7 +813,7 @@ public class WebElementServiceImpl implements WebElementService {
     }
 
     private static void reportInvalidTagName(WebElement element, String expectedTagName) {
-      if (THROW_EXCEPTION) {
+      if (ENABLED && THROW_EXCEPTION) {
         String xpath = XPathUtil.getXPath(element);
         throw new BasilException.InvalidTagName(
                 "The element \"" + xpath + "\" is not a valid \"" + expectedTagName + "\".");
@@ -841,7 +875,7 @@ public class WebElementServiceImpl implements WebElementService {
     }
 
     public static boolean validateButton(WebElement button) {
-      if (VALIDATE_BUTTONS) {
+      if (!Config.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.contains("button")) {
         return validateInputType(button, "button");
       }
       return true;
@@ -855,14 +889,8 @@ public class WebElementServiceImpl implements WebElementService {
       return validateInputType(radioButton, "radio");
     }
 
-    static {
-      ENABLED = Config.WEB_ELEMENT_VALIDATION_ENABLED;
-    }
-
-    private static final boolean ENABLED;
+    private static final boolean ENABLED = Config.WEB_ELEMENT_VALIDATION_ENABLED;
     private static final boolean THROW_EXCEPTION = Config.WEB_ELEMENT_VALIDATION_EXCEPTION;
-    private static final boolean VALIDATE_BUTTONS =
-            Config.WEB_ELEMENT_VALIDATION_IGNORED_TYPES.indexOf("button") == -1;
 
   }
 
