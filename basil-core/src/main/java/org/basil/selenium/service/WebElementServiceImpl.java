@@ -22,6 +22,7 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,65 +109,78 @@ public class WebElementServiceImpl implements WebElementService {
   }
 
   @Override
+  public void click(WebElement element, Clicker clicker) {
+    clicker.click(element);
+  }
+
+  @Override
   public void clickByJs(WebElement element) {
     // TODO Use not ServiceContext to be stateless
-    clickByJs(element, ServiceContext.getJsExecutor());
+    click(element, Clicker.javascript(ServiceContext.getJsExecutor()));
   }
 
   @Override
   public void clickByJs(WebElement element, JavascriptExecutor executor) {
-    executor.executeScript("arguments[0].click();", element);
+    click(element, Clicker.javascript(executor));
   }
 
   @Override
   public void clickByActions(WebElement element) {
     // TODO Use not ServiceContext to be stateless
-    new Actions(ServiceContext.getDriver()).click(element).click().perform();
+    click(element, Clicker.actions(ServiceContext.getDriver()));
   }
 
   @Override
   public void clickByActionsHover(WebElement element) {
     // TODO Use not ServiceContext to be stateless
-    new Actions(ServiceContext.getDriver()).moveToElement(element).click().perform();
+    click(element, Clicker.actionsHover(ServiceContext.getDriver()));
   }
 
   @Override
   public void clickLink(WebElement link) {
-    click(validate(link, ValidationRule.isLink()));
+    click(link, Clicker.link());
   }
 
   @Override
   public void clickButton(WebElement button) {
-    click(validate(button, ValidationRule.isButton()));
+    click(button, Clicker.button());
   }
 
   @Deprecated
   @Override
   public void checkCheckBox(WebElement checkBox) {
     validate(checkBox, ValidationRule.isInputCheckBox());
-    while (!isSelected(checkBox)) {
-      Sleeper.sleep_100_ms();
-      click(checkBox);
-    }
+//  while (!isSelected(checkBox)) {
+//    Sleeper.sleep_100_ms();
+//    click(checkBox);
+//  }
+    selectElement(checkBox);
   }
 
   @Deprecated
   @Override
   public void uncheckCheckBox(WebElement checkBox) {
     validate(checkBox, ValidationRule.isInputCheckBox());
-    while (isSelected(checkBox)) {
-      Sleeper.sleep_100_ms();
-      click(checkBox);
-    }
+//  while (!isSelected(checkBox)) {
+//    Sleeper.sleep_100_ms();
+//    click(checkBox);
+//  }
+    click(checkBox, Clicker.satisfies(ExtendedConditions.elementToBeUnselected(checkBox)));
   }
 
   @Override
   public void selectRadioButton(WebElement radioButton) {
     validate(radioButton, ValidationRule.isInputRadioBox());
-    while (!isSelected(radioButton)) {
-      Sleeper.sleep_100_ms();
-      click(radioButton);
-    }
+//  while (!isSelected(radioButton)) {
+//    Sleeper.sleep_100_ms();
+//    click(radioButton);
+//  }
+    selectElement(radioButton);
+  }
+
+  @Override
+  public void selectElement(WebElement element) {
+    click(element, Clicker.satisfies(ExpectedConditions.elementToBeSelected(element)));
   }
 
   @Override
@@ -174,7 +188,24 @@ public class WebElementServiceImpl implements WebElementService {
     Actions actions = new Actions(ServiceContext.getDriver());
     actions.keyDown(Keys.CONTROL);
     for (WebElement element : elements) {
-      actions.click(element);
+      selectElement(element);
+      Sleeper.sleep_50_ms();
+    }
+    actions.keyUp(Keys.CONTROL);
+    actions.perform();
+  }
+
+  @Override
+  public void unselectElement(WebElement element) {
+    click(element, Clicker.satisfies(ExtendedConditions.elementToBeUnselected(element)));
+  }
+
+  @Override
+  public void unselectElements(Iterable<WebElement> elements) {
+    Actions actions = new Actions(ServiceContext.getDriver());
+    actions.keyDown(Keys.CONTROL);
+    for (WebElement element : elements) {
+      unselectElement(element);
       Sleeper.sleep_50_ms();
     }
     actions.keyUp(Keys.CONTROL);

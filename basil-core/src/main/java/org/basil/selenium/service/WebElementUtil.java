@@ -158,6 +158,10 @@ public final class WebElementUtil {
     service.click(element);
   }
 
+  public void click(WebElement element, Clicker clicker) {
+    service.click(element, clicker);
+  }
+
   public static void clickByJs(WebElement element) {
     service.clickByJs(element);
   }

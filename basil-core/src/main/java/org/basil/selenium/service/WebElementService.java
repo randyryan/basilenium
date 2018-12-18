@@ -41,6 +41,8 @@ public interface WebElementService {
 
   void click(WebElement element);
 
+  void click(WebElement element, Clicker clicker);
+
   void clickByJs(WebElement element);
 
   void clickByJs(WebElement element, JavascriptExecutor executor);
@@ -61,7 +63,13 @@ public interface WebElementService {
 
   void selectRadioButton(WebElement radioButton);
 
+  void selectElement(WebElement element);
+
   void selectElements(Iterable<WebElement> elements);
+
+  void unselectElement(WebElement element);
+
+  void unselectElements(Iterable<WebElement> elements);
 
   void submit(WebElement element);
 

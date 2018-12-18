@@ -483,6 +483,15 @@ public final class ExtendedConditions {
     }
   }
 
+  public static ExtendedCondition<Boolean> elementToBeUnselected(final WebElement element) {
+    return new ExtendedCondition<Boolean>() {
+      @Override
+      public Boolean apply(SearchContext input) {
+        return !element.isSelected();
+      }
+    };
+  }
+
   /**
    * An expectation for checking an element is interactible based on supported precondition.
    *
