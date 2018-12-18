@@ -313,21 +313,19 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
     return new ValidationRule() {
       @Override
       public InvalidElement apply(WebElement input) {
-        // TODO Improve efficiency
-        InvalidElement isTextBox = isInputTextBox().apply(input);
-        InvalidElement isNumber = isInputNumber().apply(input);
-        InvalidElement isPassword = isInputPassword().apply(input);
-        InvalidElement isTextarea = isTextarea().apply(input);
-        if (isTextBox != null) {
-          return isTextBox;
+        if (isInputTextBox().apply(input) == null) {
+          return null;
         }
-        if (isNumber != null) {
-          return isNumber;
+        if (isInputNumber().apply(input) == null) {
+          return null;
         }
-        if (isPassword != null) {
-          return isPassword;
+        if (isInputPassword().apply(input) == null) {
+          return null;
         }
-        return isTextarea;
+        if (isTextarea().apply(input) == null) {
+          return null;
+        }
+        return null;
       }
 
       @Override
