@@ -5,12 +5,12 @@
 package org.basil.selenium.ui;
 
 /**
- * Option Select
+ * Select widget
  *
  * @author ryan131
  * @since Feb 1, 2016, 7:55:14 PM
  */
-public interface Select {
+public interface Select extends Widget {
 
   void selectOption(Option option);
 

@@ -8,18 +8,20 @@ import org.basil.selenium.service.ValidationRule;
 import org.basil.selenium.service.WebElementUtil;
 import org.openqa.selenium.WebElement;
 
-import com.google.common.base.Strings;
-
 /**
  * Input
  *
  * @author ryan131
  * @since Jun 14, 2014, 1:34:35 PM
  */
-public abstract class Input {
+public abstract class Input implements Widget {
 
   public static TextBox createTextBox(WebElement element) {
     return new TextBox(element);
+  }
+
+  public static Textarea createTextarea(WebElement element) {
+    return new Textarea(element);
   }
 
   protected WebElement element;
@@ -28,31 +30,15 @@ public abstract class Input {
     this.element = WebElementUtil.validate(element, rule);
   }
 
-  public boolean isDisabled() {
-    return element.getAttribute("disabled") != null;
+  @Override
+  public WebElement getWebElement() {
+    return element;
   }
 
-  public String getName() {
-    return element.getAttribute("name");
-  }
+  public static abstract class Textual extends Input {
 
-  public String getValue() {
-    return element.getAttribute("value");
-  }
-
-  public boolean hasValue() {
-    return !Strings.isNullOrEmpty(getValue());
-  }
-
-  /**
-   * TextBox
-   *
-   * TODO Support additional attributes
-   */
-  public static class TextBox extends Input {
-
-    private TextBox(WebElement element) {
-      super(element, ValidationRule.isInputTextBox());
+    protected Textual(WebElement element, ValidationRule rule) {
+      super(element, rule);
     }
 
     public void input(String text) {
@@ -81,7 +67,33 @@ public abstract class Input {
     }
 
     public String getText() {
-      return getValue();
+      return getValue().toString();
+    }
+
+  }
+
+  /**
+   * Textarea
+   *
+   * XXX The textarea is not a input
+   */
+  public static class Textarea extends Textual {
+
+    protected Textarea(WebElement element) {
+      super(element, ValidationRule.isTextarea());
+    }
+
+  }
+
+  /**
+   * TextBox
+   *
+   * TODO Support additional attributes
+   */
+  public static class TextBox extends Textual {
+
+    protected TextBox(WebElement element) {
+      super(element, ValidationRule.isInputTextBox());
     }
 
   }
