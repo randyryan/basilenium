@@ -17,6 +17,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -163,45 +164,63 @@ public final class WebElementUtil {
   }
 
   public static void clickByJs(WebElement element) {
-    service.clickByJs(element);
+    service.click(element, Clicker.javascript((JavascriptExecutor) context));
   }
 
-  public static void clickByJs(JavascriptExecutor executor, WebElement element) {
-    service.clickByJs(element, executor);
+  public static void clickByJs(WebElement element, JavascriptExecutor executor) {
+    service.click(element, Clicker.javascript(executor));
   }
 
   public static void clickByActions(WebElement element) {
-    service.clickByActions(element);
+    service.click(element, Clicker.actions((WebDriver) context));
   }
 
   public static void clickByActionsHover(WebElement element) {
-    service.clickByActionsHover(element);
+    service.click(element, Clicker.actionsHover((WebDriver) context));
   }
 
+  @Deprecated
   public static void clickLink(WebElement link) {
-    service.clickLink(link);
+    service.click(link, Clicker.link());
   }
 
+  @Deprecated
   public static void clickButton(WebElement button) {
-    service.clickButton(button);
+    service.click(button, Clicker.button());
   }
 
   @Deprecated
   public static void checkCheckBox(WebElement checkBox) {
-    service.checkCheckBox(checkBox);
+    service.validate(checkBox, ValidationRule.isInputCheckBox());
+    service.selectElement(checkBox);
   }
 
   @Deprecated
   public static void uncheckCheckBox(WebElement checkBox) {
-    service.uncheckCheckBox(checkBox);
+    service.validate(checkBox, ValidationRule.isInputCheckBox());
+    service.unselectElement(checkBox);
   }
 
+  @Deprecated
   public static void selectRadioButton(WebElement radioButton) {
-    service.selectRadioButton(radioButton);
+    service.validate(radioButton, ValidationRule.isInputRadioBox());
+    service.selectElement(radioButton);
+  }
+
+  public static void selectElement(WebElement element) {
+    service.selectElement(element);
   }
 
   public static void selectElements(Iterable<WebElement> elements) {
     service.selectElements(elements);
+  }
+
+  public static void unselectElement(WebElement element) {
+    service.unselectElement(element);
+  }
+
+  public static void unselectElements(Iterable<WebElement> elements) {
+    service.unselectElements(elements);
   }
 
   public static void submit(WebElement element) {

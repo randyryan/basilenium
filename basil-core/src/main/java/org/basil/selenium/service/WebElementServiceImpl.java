@@ -114,71 +114,6 @@ public class WebElementServiceImpl implements WebElementService {
   }
 
   @Override
-  public void clickByJs(WebElement element) {
-    // TODO Use not ServiceContext to be stateless
-    click(element, Clicker.javascript(ServiceContext.getJsExecutor()));
-  }
-
-  @Override
-  public void clickByJs(WebElement element, JavascriptExecutor executor) {
-    click(element, Clicker.javascript(executor));
-  }
-
-  @Override
-  public void clickByActions(WebElement element) {
-    // TODO Use not ServiceContext to be stateless
-    click(element, Clicker.actions(ServiceContext.getDriver()));
-  }
-
-  @Override
-  public void clickByActionsHover(WebElement element) {
-    // TODO Use not ServiceContext to be stateless
-    click(element, Clicker.actionsHover(ServiceContext.getDriver()));
-  }
-
-  @Override
-  public void clickLink(WebElement link) {
-    click(link, Clicker.link());
-  }
-
-  @Override
-  public void clickButton(WebElement button) {
-    click(button, Clicker.button());
-  }
-
-  @Deprecated
-  @Override
-  public void checkCheckBox(WebElement checkBox) {
-    validate(checkBox, ValidationRule.isInputCheckBox());
-//  while (!isSelected(checkBox)) {
-//    Sleeper.sleep_100_ms();
-//    click(checkBox);
-//  }
-    selectElement(checkBox);
-  }
-
-  @Deprecated
-  @Override
-  public void uncheckCheckBox(WebElement checkBox) {
-    validate(checkBox, ValidationRule.isInputCheckBox());
-//  while (!isSelected(checkBox)) {
-//    Sleeper.sleep_100_ms();
-//    click(checkBox);
-//  }
-    click(checkBox, Clicker.satisfies(ExtendedConditions.elementToBeUnselected(checkBox)));
-  }
-
-  @Override
-  public void selectRadioButton(WebElement radioButton) {
-    validate(radioButton, ValidationRule.isInputRadioBox());
-//  while (!isSelected(radioButton)) {
-//    Sleeper.sleep_100_ms();
-//    click(radioButton);
-//  }
-    selectElement(radioButton);
-  }
-
-  @Override
   public void selectElement(WebElement element) {
     click(element, Clicker.satisfies(ExpectedConditions.elementToBeSelected(element)));
   }
@@ -708,7 +643,7 @@ public class WebElementServiceImpl implements WebElementService {
 
     @Deprecated
     public static void jsClick(JavascriptExecutor executor, WebElement element) {
-      WebElementUtil.clickByJs(executor, element);
+      WebElementUtil.clickByJs(element, executor);
     }
 
     @Deprecated

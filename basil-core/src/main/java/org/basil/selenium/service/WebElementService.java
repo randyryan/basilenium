@@ -9,7 +9,6 @@ import java.util.List;
 import org.basil.selenium.BasilException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
@@ -37,31 +36,9 @@ public interface WebElementService {
 
   // WebElement Standard Services
 
-  // WebElement Click Services
-
   void click(WebElement element);
 
   void click(WebElement element, Clicker clicker);
-
-  void clickByJs(WebElement element);
-
-  void clickByJs(WebElement element, JavascriptExecutor executor);
-
-  void clickByActions(WebElement element);
-
-  void clickByActionsHover(WebElement element);
-
-  void clickLink(WebElement link);
-
-  void clickButton(WebElement button);
-
-  @Deprecated
-  void checkCheckBox(WebElement checkBox);
-
-  @Deprecated
-  void uncheckCheckBox(WebElement checkBox);
-
-  void selectRadioButton(WebElement radioButton);
 
   void selectElement(WebElement element);
 
