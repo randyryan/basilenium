@@ -588,59 +588,74 @@ public abstract class Dijit extends BasilElement {
    * @author ryan131
    * @since Aug 1, 2015, 11:54:54 AM
    */
-  public static class TextBox extends TextWidget {
+  public static class TextBox extends TextInput<Input.TextBox> {
 
     // Constructor
 
-    public TextBox(SearchContext context) {
-      super(context, By.xpath("//*[contains(@class, 'dijitTextBox') and @widgetid]"));
-    }
-
-    public TextBox(SearchContext context, By locator) {
-      super(context, locator);
-    }
-
-    public TextBox(SearchContext context, String xpathExpression) {
-      super(context, xpathExpression);
-    }
-
-    public TextBox(WebElement element) {
+    protected TextBox(WebElement element) {
       super(element);
+    }
+
+    public TextBox(Input.TextBox textBox) {
+      super(textBox, Mode.INNER);
+    }
+
+    protected TextBox(SearchContext parent) {
+      super(parent, By.xpath("//*[contains(@class, 'dijitTextBox') and @widgetid]"));
+    }
+
+    public TextBox(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitTextBox')]"));
+    }
+
+    public TextBox(SearchContext parent, By locator) {
+      super(parent, locator);
     }
 
     // Methods
 
     @Override
-    public WebElement getWidget() {
-      if (dijitInputInner == null) {
-        dijitInputInner = findByClass("dijitInputInner");
+    public Input.TextBox getWidget() {
+      if (getMode() != Mode.INNER && widget == null) {
+        setWidget(Input.createTextBox(findById(getWidgetid())));
       }
-      return dijitInputInner;
+      return widget;
     }
 
   }
 
-  public static class TextArea extends TextWidget {
+  public static class TextArea extends TextInput<Input.Textarea> {
 
     // Constructor
 
+    public TextArea(WebElement element) {
+      super(element);
+    }
+
+    public TextArea(Input.Textarea textarea) {
+      super(textarea, Mode.UNISON);
+    }
+
     public TextArea(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitTextArea') and @widgetid]"));
+    }
+
+    public TextArea(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//textarea[contains(@class, 'dijitTextArea')]"));
     }
 
     public TextArea(SearchContext context, By locator) {
       super(context, locator);
     }
 
-    public TextArea(WebElement element) {
-      super(element);
-    }
-
     // Methods
 
     @Override
-    public WebElement getWidget() {
-      return this;
+    public Input.Textarea getWidget() {
+      if (getMode() != Mode.UNISON && widget == null) { // Initialized in Mode.OUTER.
+        setWidget(Input.createTextarea((WebElement) getContext()));
+      }
+      return widget; // The unison mode widget
     }
 
   }
@@ -655,21 +670,29 @@ public abstract class Dijit extends BasilElement {
 
     // WebElements
 
-    private WebElement dijitUpArrowButton;
-    private WebElement dijitDownArrowButton;
+    protected WebElement dijitUpArrowButton;
+    protected WebElement dijitDownArrowButton;
 
     // Constructor
 
-    public Spinner(SearchContext context) {
+    protected Spinner(WebElement element) {
+      super(element);
+    }
+
+    protected Spinner(Input.TextBox textbox) {
+      super(textbox);
+    }
+
+    protected Spinner(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitSpinner') and @widgetid]"));
     }
 
-    public Spinner(SearchContext context, By locator) {
-      super(context, locator);
+    public Spinner(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitSpinner')]"));
     }
 
-    public Spinner(WebElement element) {
-      super(element);
+    protected Spinner(SearchContext context, By locator) {
+      super(context, locator);
     }
 
     // Methods
@@ -693,7 +716,8 @@ public abstract class Dijit extends BasilElement {
     }
 
     public void spin(double value) {
-      double current = getValue().toDouble();
+      double current = getValue().toDouble(); // TODO Add ability to use mouse scroll and then let
+      // user to choose to use arrow button or scroll in the configuration.
       WebElement arrowButton = current < value ? dijitUpArrowButton() : dijitDownArrowButton();
       while (current != value) {
         arrowButton.click();
