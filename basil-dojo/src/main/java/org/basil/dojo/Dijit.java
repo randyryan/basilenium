@@ -11,12 +11,17 @@ import org.basil.dojo.widget.DijitCalendar;
 import org.basil.dojo.widget.DijitMenu;
 import org.basil.selenium.BasilElement;
 import org.basil.selenium.BasilException;
+import org.basil.selenium.BasilException.InvalidElement;
 import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.page.BaseLookup;
+import org.basil.selenium.service.ValidationRule;
 import org.basil.selenium.service.WebElementService;
 import org.basil.selenium.service.WebElementUtil;
 import org.basil.selenium.ui.ARIAs;
+import org.basil.selenium.ui.Input;
 import org.basil.selenium.ui.Pessimistically;
+import org.basil.selenium.ui.Widget;
+import org.openqa.selenium.Beta;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.SearchContext;
@@ -24,8 +29,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spearmint.util.Sleeper;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 /**
@@ -35,6 +43,8 @@ import com.google.common.collect.Lists;
  * @since May 27, 2016, 3:55:26 PM
  */
 public abstract class Dijit extends BasilElement {
+
+  private static final Logger logger = LoggerFactory.getLogger(Dijit.class);
 
   // WebDriver and WebDriverWait
 
@@ -328,20 +338,29 @@ public abstract class Dijit extends BasilElement {
 
   // Dijit
 
-  public Dijit(WebElement element) {
+  protected Dijit() {
+  }
+
+  /**
+   * Initialize this Dijit object with its root element specified.
+   */
+  protected Dijit(WebElement element) {
     super(element);
   }
 
-  public Dijit(SearchContext context, By locator) {
-    super(context, locator);
-  }
-
-  public Dijit(SearchContext context, String xpathExpression) {
-    super(context, By.xpath(xpathExpression));
+  /**
+   * Initialize this Dijit object with the parent and locator for its root element specified.
+   */
+  protected Dijit(SearchContext parent, By locator) {
+    super(parent, locator);
   }
 
   protected WebElement findByClass(String className) {
     return findElement(By.className(className));
+  }
+
+  protected WebElement findById(String id) {
+    return findElement(By.id(id));
   }
 
   protected WebElement findByAttachPoint(String attachPoint) {
@@ -361,79 +380,141 @@ public abstract class Dijit extends BasilElement {
     return hasClass("dijitFocused");
   }
 
-  // Dijit widget
-
   /**
    * Dijit Widget
    *
    * @author ryan131
    * @since May 27, 2016, 3:59:38 PM
    */
-  public static abstract class Widget extends Dijit {
+  public static abstract class Widget<W extends org.basil.selenium.ui.Widget> extends Dijit {
+
+    protected W widget;
+    protected Mode mode;
 
     // Constructor
 
-    public Widget(SearchContext context) {
-      super(context, By.xpath("//*[contains(@class, 'dijit') and @id and @widgetid]"));
+    protected Widget() {
     }
 
-    public Widget(SearchContext context, By locator) {
-      super(context, locator);
+    /**
+     * Initialize this Dijit widget with the parent for it's root element specified.
+     */
+    protected Widget(SearchContext parent) {
+      super(parent, By.xpath("//*[contains(@class, 'dijit') and @id and @widgetid]"));
+      setMode(Mode.OUTER);
     }
 
-    public Widget(SearchContext context, String xpathExpression) {
-      super(context, xpathExpression);
+    /**
+     * Initialize this Dijit widget with the parent and locator for it's root element specified.
+     */
+    protected Widget(SearchContext parent, By locator) {
+      super(parent, locator);
+      setMode(Mode.OUTER);
     }
 
-    public Widget(WebElement element) {
+    /**
+     * Initialize this Dijit widget with its root element specified.
+     */
+    protected Widget(WebElement element) {
       super(element);
+      setMode(Mode.OUTER);
+    }
+
+    /**
+     * Initialize this Dijit widget with its inner Widget specified.
+     */
+    protected Widget(W widget, Mode mode) {
+      setWidget(widget);
+      Preconditions.checkArgument(mode != Mode.OUTER);
+      setMode(mode);
+      setLocator(By.xpath("//*[@id='widget_'" + widget.getId() + "']"));
     }
 
     // Methods
 
-    public abstract WebElement getWidget();
+    protected void setMode(Mode mode) {
+      this.mode = mode;
+    }
 
+    protected Mode getMode() {
+      return mode;
+    }
+
+    protected void setWidget(W innerWidget) {
+      this.widget = innerWidget;
+    }
+
+    public abstract W getWidget();
+
+    /**
+     * Returns the "widgetid" attribute of this Dijit widget.
+     */
     public String getWidgetid() {
+      if (getMode() == Mode.INNER || getMode() == Mode.UNISON) {
+        return WebElementUtil.getId(widget.getWebElement());
+      }
       return getAttribute("widgetid");
+    }
+
+    public enum Mode {
+
+      /**
+       * The widget is given a root WebElement. All nested elements used are located
+       * with/under this given root WebElement.
+       */
+      OUTER,
+
+      /**
+       * The widget is given a inner Widget that can be used to perform most of the
+       * operations except few that Dojo designated to other elements.
+       */
+      INNER,
+
+      /**
+       * The widget's root element is also the "inner" Widget at the same time.
+       */
+      UNISON;
+
     }
 
   }
 
-  // Input-based widget
-
-  public static abstract class InputWidget extends Widget {
+  /**
+   * Input tag based widget
+   */
+  public static abstract class InputWidget<I extends Input> extends Widget<I> {
 
     // WebElements
 
-    protected WebElement dijitInputInner;
+//    protected WebElement dijitInputInner;
     protected WebElement dijitValidationContainer;
 
     // Constructor
 
-    public InputWidget(SearchContext context) {
-      super(context);
+    protected InputWidget() {
     }
 
-    public InputWidget(SearchContext context, By locator) {
-      super(context, locator);
+    protected InputWidget(SearchContext parent) {
+      super(parent);
     }
 
-    public InputWidget(SearchContext context, String xpathExpression) {
-      super(context, xpathExpression);
+    protected InputWidget(SearchContext parent, By locator) {
+      super(parent, locator);
     }
 
-    public InputWidget(WebElement element) {
+    protected InputWidget(WebElement element) {
       super(element);
+    }
+
+    protected InputWidget(I input, Mode mode) {
+      super(input, mode);
     }
 
     // Methods
 
     @Override
-    public WebElement getWidget() {
-      if (dijitInputInner == null) {
-        dijitInputInner = findByClass("dijitInputInner");
-      }
-      return dijitInputInner;
+    protected void setWidget(I inputWidget) {
+      super.setWidget(inputWidget);
     }
 
     protected WebElement dijitValidationContainer() {
@@ -454,50 +535,49 @@ public abstract class Dijit extends BasilElement {
 
     public boolean isRequired() {
       getWidget().clear();
-      getWidget().sendKeys(Keys.TAB);
+      getWidget().sendKeys(Keys.TAB); // TODO Add blur() to Input and use blur()
       Sleeper.sleep_250_ms(); // Prevent "dirty-read"
       return !isValid();
     }
 
   }
 
-  public static abstract class TextWidget extends InputWidget {
+  public static abstract class TextInput<T extends Input.Textual> extends InputWidget<T> {
 
     // Constructor
 
-    public TextWidget(SearchContext context) {
-      super(context);
+    protected TextInput(SearchContext parent) {
+      super(parent);
     }
 
-    public TextWidget(SearchContext context, By locator) {
-      super(context, locator);
+    protected TextInput(SearchContext parent, By locator) {
+      super(parent, locator);
     }
 
-    public TextWidget(SearchContext context, String xpathExpression) {
-      super(context, xpathExpression);
-    }
-
-    public TextWidget(WebElement element) {
+    protected TextInput(WebElement element) {
       super(element);
+    }
+
+    protected TextInput(T textual, Mode mode) {
+      super(textual, mode);
     }
 
     // Methods
 
     public void input(String value) {
-      getWidget().clear();
-      getWidget().sendKeys(value);
+      getWidget().input(value);
     }
 
     public void input(long value) {
-      input(String.valueOf(value));
+      getWidget().input(value);
     }
 
     public void input(double value) {
-      input(String.valueOf(value));
+      getWidget().input(value);
     }
 
     public WebElementService.ValueConverter getValue() {
-      return WebElementUtil.getValue(getWidget());
+      return getWidget().getValue();
     }
 
   }
