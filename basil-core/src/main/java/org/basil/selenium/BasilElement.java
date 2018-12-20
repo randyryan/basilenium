@@ -60,6 +60,10 @@ import com.google.common.collect.Lists;
 @SuppressWarnings({"unused"})
 public class BasilElement extends AbstractElement implements WebElement, WrapsElement, Locatable {
 
+  public static BasilElement create(WebElement element) {
+    return new BasilElement(element);
+  }
+
   public static BasilElement create(SearchContext parent, By locator) {
     return new BasilElement(parent, locator);
   }
@@ -68,15 +72,18 @@ public class BasilElement extends AbstractElement implements WebElement, WrapsEl
     return new BasilElement(parent, label);
   }
 
-  public static BasilElement create(WebElement element) {
-    return new BasilElement(element);
-  }
-
   private static final Logger logger = LoggerFactory.getLogger(BasilElement.class);
 
   private Resolve resolve;
 
   // Constructor
+
+  protected BasilElement() {
+  }
+
+  protected BasilElement(WebElement element) {
+    setParent(driver()).setContext(element).resolve().when(ResolveWhen.INITIALIZATION).from(ResolveFrom.ELEMENT);
+  }
 
   protected BasilElement(SearchContext parent, By locator) {
     setParent(parent).setLocator(locator).resolve().when(ResolveWhen.INVOCATION).from(ResolveFrom.BY);
@@ -84,10 +91,6 @@ public class BasilElement extends AbstractElement implements WebElement, WrapsEl
 
   protected BasilElement(SearchContext parent, String label) {
     setParent(parent).resolve().when(ResolveWhen.INVOCATION).from(ResolveFrom.LABEL).label(label);
-  }
-
-  protected BasilElement(WebElement element) {
-    setParent(driver()).setContext(element).resolve().when(ResolveWhen.INITIALIZATION).from(ResolveFrom.ELEMENT);
   }
 
   // Context

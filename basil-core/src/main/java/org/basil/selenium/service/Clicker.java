@@ -23,6 +23,15 @@ public interface Clicker {
 
   void click(WebElement element);
 
+  public static Clicker element() {
+    return new Clicker() {
+      @Override
+      public void click(WebElement element) {
+        element.click();
+      }
+    };
+  }
+
   public static Clicker javascript(final JavascriptExecutor executor) {
     return new Clicker() {
       @Override
@@ -37,6 +46,15 @@ public interface Clicker {
       @Override
       public void click(WebElement element) {
         new Actions(driver).click(element).click().perform();
+      }
+    };
+  }
+
+  public static Clicker actions(final Actions actions) {
+    return new Clicker() {
+      @Override
+      public void click(WebElement element) {
+        actions.click(element);
       }
     };
   }
@@ -68,13 +86,18 @@ public interface Clicker {
     };
   }
 
+  public static <S extends SearchContext> Clicker satisfies(final Function<S, ?> condition) {
+    return satisfies(condition, element());
+  }
+
   /**
    * Click repetitively until the incoming condition is satisfied or timed out.
    *
    * The method signature is weird but works with both ExpectedCondition and ExtendedCondition.
    */
   @SuppressWarnings("unchecked")
-  public static <S extends SearchContext> Clicker satisfies(Function<S, ?> condition) {
+  public static <S extends SearchContext> Clicker satisfies(
+      final Function<S, ?> condition, final Clicker clicker) {
     final int tries = 8;       // Times of tries
     final long interval = 125; // Interval between each try
 
@@ -82,7 +105,7 @@ public interface Clicker {
       @Override
       public void click(WebElement element) {
         for (int i = tries; i > 0; i--) {
-          element.click();
+          clicker.click(element);
           Object result = null;
           if (condition instanceof ExpectedCondition) {
             try {

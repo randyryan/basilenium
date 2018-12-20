@@ -12,6 +12,7 @@ import org.basil.selenium.BasilElement;
 import org.basil.selenium.BasilException;
 import org.basil.selenium.page.PageObject;
 import org.basil.selenium.ui.ExtendedConditions;
+import org.openqa.selenium.Beta;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -118,13 +119,20 @@ public class WebElementServiceImpl implements WebElementService {
     click(element, Clicker.satisfies(ExpectedConditions.elementToBeSelected(element)));
   }
 
+  @Beta
+  public void selectElement(WebElement element, Clicker clicker) {
+    click(element, Clicker.satisfies(ExpectedConditions.elementToBeSelected(element), clicker));
+  }
+
   @Override
   public void selectElements(Iterable<WebElement> elements) {
     Actions actions = new Actions(ServiceContext.getDriver());
     actions.keyDown(Keys.CONTROL);
     for (WebElement element : elements) {
-      selectElement(element);
-      Sleeper.sleep_50_ms();
+      if (!element.isSelected()) {
+        actions.click(element);
+        Sleeper.sleep_50_ms();
+      }
     }
     actions.keyUp(Keys.CONTROL);
     actions.perform();
@@ -140,8 +148,10 @@ public class WebElementServiceImpl implements WebElementService {
     Actions actions = new Actions(ServiceContext.getDriver());
     actions.keyDown(Keys.CONTROL);
     for (WebElement element : elements) {
-      unselectElement(element);
-      Sleeper.sleep_50_ms();
+      if (element.isSelected()) {
+        actions.click(element);
+        Sleeper.sleep_50_ms();
+      }
     }
     actions.keyUp(Keys.CONTROL);
     actions.perform();
@@ -360,7 +370,7 @@ public class WebElementServiceImpl implements WebElementService {
     validate(element, ValidationRule.isTextualInput());
     clear(element);
     if (!Strings.isNullOrEmpty(text)) {
-      sendKeys(element);
+      sendKeys(element, text);
     }
   }
 
