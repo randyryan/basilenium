@@ -11,17 +11,13 @@ import org.basil.dojo.widget.DijitCalendar;
 import org.basil.dojo.widget.DijitMenu;
 import org.basil.selenium.BasilElement;
 import org.basil.selenium.BasilException;
-import org.basil.selenium.BasilException.InvalidElement;
 import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.page.BaseLookup;
-import org.basil.selenium.service.ValidationRule;
 import org.basil.selenium.service.WebElementService;
 import org.basil.selenium.service.WebElementUtil;
 import org.basil.selenium.ui.ARIAs;
 import org.basil.selenium.ui.Input;
 import org.basil.selenium.ui.Pessimistically;
-import org.basil.selenium.ui.Widget;
-import org.openqa.selenium.Beta;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.SearchContext;
@@ -29,8 +25,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spearmint.util.Sleeper;
 
 import com.google.common.base.Preconditions;
@@ -43,8 +37,6 @@ import com.google.common.collect.Lists;
  * @since May 27, 2016, 3:55:26 PM
  */
 public abstract class Dijit extends BasilElement {
-
-  private static final Logger logger = LoggerFactory.getLogger(Dijit.class);
 
   // WebDriver and WebDriverWait
 
@@ -583,58 +575,13 @@ public abstract class Dijit extends BasilElement {
   }
 
   /**
-   * DijitTextBox
+   * DijitTextArea
    *
    * @author ryan131
-   * @since Aug 1, 2015, 11:54:54 AM
    */
-  public static class TextBox extends TextInput<Input.TextBox> {
-
-    // Constructor
-
-    protected TextBox(WebElement element) {
-      super(element);
-    }
-
-    public TextBox(Input.TextBox textBox) {
-      super(textBox, Mode.INNER);
-    }
-
-    protected TextBox(SearchContext parent) {
-      super(parent, By.xpath("//*[contains(@class, 'dijitTextBox') and @widgetid]"));
-    }
-
-    public TextBox(SearchContext parent, String rootXPath) {
-      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitTextBox')]"));
-    }
-
-    public TextBox(SearchContext parent, By locator) {
-      super(parent, locator);
-    }
-
-    // Methods
-
-    @Override
-    public Input.TextBox getWidget() {
-      if (getMode() != Mode.INNER && widget == null) {
-        setWidget(Input.createTextBox(findById(getWidgetid())));
-      }
-      return widget;
-    }
-
-  }
-
   public static class TextArea extends TextInput<Input.Textarea> {
 
     // Constructor
-
-    public TextArea(WebElement element) {
-      super(element);
-    }
-
-    public TextArea(Input.Textarea textarea) {
-      super(textarea, Mode.UNISON);
-    }
 
     public TextArea(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitTextArea') and @widgetid]"));
@@ -648,6 +595,14 @@ public abstract class Dijit extends BasilElement {
       super(context, locator);
     }
 
+    public TextArea(WebElement element) {
+      super(element);
+    }
+
+    public TextArea(Input.Textarea textarea) {
+      super(textarea, Mode.UNISON);
+    }
+
     // Methods
 
     @Override
@@ -656,6 +611,48 @@ public abstract class Dijit extends BasilElement {
         setWidget(Input.createTextarea((WebElement) getContext()));
       }
       return widget; // The unison mode widget
+    }
+
+  }
+
+  /**
+   * DijitTextBox
+   *
+   * @author ryan131
+   * @since Aug 1, 2015, 11:54:54 AM
+   */
+  public static class TextBox extends TextInput<Input.TextBox> {
+
+    // Constructor
+
+    public TextBox(SearchContext parent) {
+      super(parent, By.xpath("//*[contains(@class, 'dijitTextBox') and @widgetid]"));
+    }
+
+    public TextBox(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitTextBox')]"));
+    }
+
+    public TextBox(SearchContext parent, By locator) {
+      super(parent, locator);
+    }
+
+    public TextBox(WebElement element) {
+      super(element);
+    }
+
+    public TextBox(Input.TextBox textBox) {
+      super(textBox, Mode.INNER);
+    }
+
+    // Methods
+
+    @Override
+    public Input.TextBox getWidget() {
+      if (getMode() != Mode.INNER && widget == null) {
+        setWidget(Input.createTextBox(findById(getWidgetid())));
+      }
+      return widget;
     }
 
   }
@@ -675,15 +672,7 @@ public abstract class Dijit extends BasilElement {
 
     // Constructor
 
-    protected Spinner(WebElement element) {
-      super(element);
-    }
-
-    protected Spinner(Input.TextBox textbox) {
-      super(textbox);
-    }
-
-    protected Spinner(SearchContext context) {
+    public Spinner(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitSpinner') and @widgetid]"));
     }
 
@@ -691,8 +680,16 @@ public abstract class Dijit extends BasilElement {
       super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitSpinner')]"));
     }
 
-    protected Spinner(SearchContext context, By locator) {
+    public Spinner(SearchContext context, By locator) {
       super(context, locator);
+    }
+
+    public Spinner(WebElement element) {
+      super(element);
+    }
+
+    public Spinner(Input.TextBox textbox) {
+      super(textbox);
     }
 
     // Methods
@@ -731,73 +728,12 @@ public abstract class Dijit extends BasilElement {
 
   }
 
-  public static class Select extends Widget<org.basil.selenium.ui.Widget> {
-
-    // WebElements
-
-    private WebElement dijitDownArrowButton;
-    private DijitMenu dijitMenu;
-
-    // Constructor
-
-    public Select(SearchContext context) {
-      super(context, By.xpath("//*[contains(@class, 'dijitSelect') and @widgetid]"));
-    }
-
-    public Select(SearchContext parent, String rootXPath) {
-      super(parent, By.xpath(rootXPath + "//table[contains(@class, 'dijitSelect')]"));
-    }
-
-    public Select(SearchContext context, By locator) {
-      super(context, locator);
-    }
-
-    public Select(WebElement element) {
-      super(element);
-    }
-
-    // Methods
-
-    protected WebElement dijitDownArrowButton() {
-      if (dijitDownArrowButton == null) {
-        dijitDownArrowButton = findByClass("dijitDownArrowButton");
-      }
-      return dijitDownArrowButton;
-    }
-
-    protected DijitMenu dijitMenu() {
-      if (dijitMenu == null) {
-        String dijitMenuId = Pessimistically.clickGetAttribute(this, "aria-owns");
-        dijitMenu = new DijitMenu(getDriver(), By.id(dijitMenuId));
-      }
-      return dijitMenu;
-    }
-
-    public void selectItem(String name) {
-      dijitMenu().selectItem(name);
-    }
-
-    public void selectItem(org.basil.selenium.ui.Select.Option option) {
-      dijitMenu().selectItem(option.value());
-    }
-
-    public String getSelectedItem() {
-      return findByClass("dijitSelectLabel").getText();
-    }
-
-    @Override
-    public org.basil.selenium.ui.Widget getWidget() {
-      throw new UnsupportedOperationException("DijitSelect is not a standard select!");
-    }
-
-  }
-
   public static class ComboBox extends TextBox {
 
     // WebElements
 
-    private WebElement dijitDownArrowButton;
-    private DijitMenu dijitMenu;
+    protected WebElement dijitDownArrowButton;
+    protected DijitMenu dijitMenu;
 
     // Constructor
 
@@ -854,8 +790,8 @@ public abstract class Dijit extends BasilElement {
 
     // WebElements
 
-    private WebElement dijitDownArrowButton;
-    private DijitCalendar dijitCalendar;
+    protected WebElement dijitDownArrowButton;
+    protected DijitCalendar dijitCalendar;
 
     // Constructor
 
@@ -986,6 +922,10 @@ public abstract class Dijit extends BasilElement {
       super(element);
     }
 
+    public Radio(Input.RadioButton radioButton) {
+      super(radioButton, Mode.INNER);
+    }
+
     // Methods
 
     @Override
@@ -1010,6 +950,67 @@ public abstract class Dijit extends BasilElement {
 
     public boolean isUnchecked() {
       throw new UnsupportedOperationException("Select another radio button in group to deselect.");
+    }
+
+  }
+
+  public static class Select extends Widget<org.basil.selenium.ui.Widget> {
+
+    // WebElements
+
+    protected WebElement dijitDownArrowButton;
+    protected DijitMenu dijitMenu;
+
+    // Constructor
+
+    public Select(SearchContext context) {
+      super(context, By.xpath("//*[contains(@class, 'dijitSelect') and @widgetid]"));
+    }
+
+    public Select(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//table[contains(@class, 'dijitSelect')]"));
+    }
+
+    public Select(SearchContext context, By locator) {
+      super(context, locator);
+    }
+
+    public Select(WebElement element) {
+      super(element);
+    }
+
+    // Methods
+
+    protected WebElement dijitDownArrowButton() {
+      if (dijitDownArrowButton == null) {
+        dijitDownArrowButton = findByClass("dijitDownArrowButton");
+      }
+      return dijitDownArrowButton;
+    }
+
+    protected DijitMenu dijitMenu() {
+      if (dijitMenu == null) {
+        String dijitMenuId = Pessimistically.clickGetAttribute(this, "aria-owns");
+        dijitMenu = new DijitMenu(getDriver(), By.id(dijitMenuId));
+      }
+      return dijitMenu;
+    }
+
+    public void selectItem(String name) {
+      dijitMenu().selectItem(name);
+    }
+
+    public void selectItem(org.basil.selenium.ui.Select.Option option) {
+      dijitMenu().selectItem(option.value());
+    }
+
+    public String getSelectedItem() {
+      return findByClass("dijitSelectLabel").getText();
+    }
+
+    @Override
+    public org.basil.selenium.ui.Widget getWidget() {
+      throw new UnsupportedOperationException("DijitSelect is not a standard select!");
     }
 
   }

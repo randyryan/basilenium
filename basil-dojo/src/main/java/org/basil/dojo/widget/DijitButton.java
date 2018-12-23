@@ -35,6 +35,12 @@ public class DijitButton extends Dijit {
   }
 
   @Override
+  public boolean isDisabled() {
+    defaultAction.abort();
+    return hasClass("dijitButtonDisabled");
+  }
+
+  @Override
   public boolean isFocused() {
     defaultAction.abort();
     return hasClass("dijitButtonFocused");
