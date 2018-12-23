@@ -731,7 +731,7 @@ public abstract class Dijit extends BasilElement {
 
   }
 
-  public static class Select extends InputWidget {
+  public static class Select extends Widget<org.basil.selenium.ui.Widget> {
 
     // WebElements
 
@@ -742,6 +742,10 @@ public abstract class Dijit extends BasilElement {
 
     public Select(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitSelect') and @widgetid]"));
+    }
+
+    public Select(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//table[contains(@class, 'dijitSelect')]"));
     }
 
     public Select(SearchContext context, By locator) {
@@ -781,18 +785,28 @@ public abstract class Dijit extends BasilElement {
       return findByClass("dijitSelectLabel").getText();
     }
 
+    @Override
+    public org.basil.selenium.ui.Widget getWidget() {
+      throw new UnsupportedOperationException("DijitSelect is not a standard select!");
+    }
+
   }
 
-  public static class ComboBox extends Select {
+  public static class ComboBox extends TextBox {
 
     // WebElements
 
+    private WebElement dijitDownArrowButton;
     private DijitMenu dijitMenu;
 
     // Constructor
 
     public ComboBox(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitComboBox') and @widgetid]"));
+    }
+
+    public ComboBox(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitComboBox')]"));
     }
 
     public ComboBox(SearchContext context, By locator) {
@@ -805,31 +819,33 @@ public abstract class Dijit extends BasilElement {
 
     // Methods
 
+    protected WebElement dijitDownArrowButton() {
+      if (dijitDownArrowButton == null) {
+        dijitDownArrowButton = findByClass("dijitDownArrowButton");
+      }
+      return dijitDownArrowButton;
+    }
+
     protected DijitMenu dijitMenu() {
       if (dijitMenu == null) {
-        String dijitMenuId = Pessimistically.clickGetAttribute(this, dijitDownArrowButton(), "aria-owns");
+        dijitDownArrowButton().click(); // TODO Update the way to click and wait for the attribute
+        String dijitMenuId = getAttribute("aria-owns");
+//        String dijitMenuId = Pessimistically.clickGetAttribute(this, dijitDownArrowButton(), "aria-owns");
         dijitMenu = new DijitMenu(getDriver(), By.id(dijitMenuId));
       }
       return dijitMenu;
     }
 
-    // Methods from TextBox
-
-    public void input(String value) {
-      getWidget().clear();
-      getWidget().sendKeys(value);
+    public void selectItem(String name) {
+      dijitMenu().selectItem(name);
     }
 
-    public void input(long value) {
-      input(String.valueOf(value));
+    public void selectItem(org.basil.selenium.ui.Select.Option option) {
+      dijitMenu().selectItem(option.value());
     }
 
-    public void input(double value) {
-      input(String.valueOf(value));
-    }
-
-    public WebElementService.ValueConverter getValue() {
-      return WebElementUtil.getValue(getWidget());
+    public String getSelectedItem() {
+      return findByClass("dijitSelectLabel").getText();
     }
 
   }
@@ -845,6 +861,10 @@ public abstract class Dijit extends BasilElement {
 
     public DateTextBox(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitDateTextBox') and @widgetid]"));
+    }
+
+    public DateTextBox(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitDateTextBox')]"));
     }
 
     public DateTextBox(SearchContext context, By locator) {
@@ -884,12 +904,16 @@ public abstract class Dijit extends BasilElement {
    * @author ryan131
    * @since Sep 27, 2015, 5:40:32 PM
    */
-  public static class CheckBox extends Widget {
+  public static class CheckBox extends Widget<Input.CheckBox> {
 
     // Constructor
 
     public CheckBox(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitCheckBox') and @widgetid]"));
+    }
+
+    public CheckBox(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitCheckBox')]"));
     }
 
     public CheckBox(SearchContext context, By locator) {
@@ -900,27 +924,38 @@ public abstract class Dijit extends BasilElement {
       super(element);
     }
 
+    public CheckBox(Input.CheckBox checkBox) {
+      super(checkBox, Mode.INNER);
+    }
+
     // Methods
 
     @Override
-    public WebElement getWidget() {
-      return findByClass("dijitCheckBoxInput");
+    public org.basil.selenium.ui.Input.CheckBox getWidget() {
+      if (getMode() != Mode.INNER && widget == null) {
+        setWidget(new Input.CheckBox(findById(getWidgetid())));
+      }
+      return widget;
     }
 
     public void check() {
-      Pessimistically.clickAndHasClass(this, "dijitCheckBoxChecked");
+//      Pessimistically.clickAndHasClass(this, "dijitCheckBoxChecked");
+      getWidget().check(); // TODO use the attribute
     }
 
     public void uncheck() {
-      Pessimistically.clickAndHasNoClass(this, "dijitCheckBoxChecked");
+//      Pessimistically.clickAndHasNoClass(this, "dijitCheckBoxChecked");
+      getWidget().uncheck(); // TODO use the attribute
     }
 
     public boolean isChecked() {
-      return hasClass("dijitCheckBoxChecked");
+//      return hasClass("dijitCheckBoxChecked");
+      return getWidget().isChecked(); // TODO use the attribute
     }
 
     public boolean isUnchecked() {
-      return !isChecked();
+//      return !isChecked();
+      return getWidget().isUnchecked(); // TODO use the attribute
     }
 
   }
@@ -931,12 +966,16 @@ public abstract class Dijit extends BasilElement {
    * @author ryan131
    * @since Sep 28, 2015, 5:07:38 PM
    */
-  public static class Radio extends CheckBox {
+  public static class Radio extends Widget<Input.RadioButton> {
 
     // Constructor
 
     public Radio(SearchContext context) {
       super(context, By.xpath("//*[contains(@class, 'dijitRadio') and @widgetid]"));
+    }
+
+    public Radio(SearchContext parent, String rootXPath) {
+      super(parent, By.xpath(rootXPath + "//div[contains(@class, 'dijitRadio')]"));
     }
 
     public Radio(SearchContext context, By locator) {
@@ -948,6 +987,14 @@ public abstract class Dijit extends BasilElement {
     }
 
     // Methods
+
+    @Override
+    public org.basil.selenium.ui.Input.RadioButton getWidget() {
+      if (getMode() != Mode.INNER && widget == null) {
+        setWidget(new Input.RadioButton(findById(getWidgetid())));
+      }
+      return widget;
+    }
 
     public void check() {
       Pessimistically.clickAndHasClass(this, "dijitRadioChecked");
