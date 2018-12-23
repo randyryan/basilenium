@@ -203,7 +203,7 @@ public final class WebElementUtil {
 
   @Deprecated
   public static void selectRadioButton(WebElement radioButton) {
-    service.validate(radioButton, ValidationRule.isInputRadioBox());
+    service.validate(radioButton, ValidationRule.isInputRadioButton());
     service.selectElement(radioButton);
   }
 

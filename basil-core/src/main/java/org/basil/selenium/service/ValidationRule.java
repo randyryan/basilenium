@@ -216,7 +216,7 @@ public interface ValidationRule extends Function<WebElement, BasilException.Inva
   /**
    * A validation rule for checking if the element is <input type="radio">
    */
-  static ValidationRule isInputRadioBox() {
+  static ValidationRule isInputRadioButton() {
     return new ValidationRule() {
       @Override
       public InvalidElement apply(WebElement input) {

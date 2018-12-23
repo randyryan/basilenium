@@ -55,6 +55,9 @@ public abstract class AbstractContext implements SearchContext {
   }
 
   public SearchContext getContext() {
+    if (!resolve().isResolved()) {
+      resolve().resolve();
+    }
     return context().get();
   }
 

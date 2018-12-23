@@ -79,6 +79,7 @@ public class BasilElement extends AbstractElement implements WebElement, WrapsEl
   // Constructor
 
   protected BasilElement() {
+    resolve().when(ResolveWhen.INVOCATION).from(ResolveFrom.BY);
   }
 
   protected BasilElement(WebElement element) {
