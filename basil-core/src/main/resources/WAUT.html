@@ -7,6 +7,8 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 
     <title>Basil</title>
   </head>
@@ -19,23 +21,20 @@
 
     <div class="jumbotron">
       <h1 class="display-3">Basil</h1>
-      <p class="lead">Your solution to Selenium WebDriver tests with Java.</p>
+      <p class="lead">A framework for test automation development with Selenium WebDriver in Java. <a href="https://github.com/randyryan/basil" role="button"><i class="fab fa-github-square"></i></a></p>
       <hr class="my-4">
-      <p>Provides many new mechanisms, tweaks, and what's missing to out-of-box Selenium, you only use parts that you need.</p>
       <p class="lead">
-        <a class="btn btn-dark" href="https://github.com/randyryan" role="button">Find me on GitHub</a>
-        <a class="btn btn-dark" href="https://github.com/collections/machine-learning" role="button">Collection: Getting started with machine learning</a>
-        <button type="button" class="btn btn-primary" test="" disabled="">I'm disabled and you can't do a thing about me!</button>
-     </p>
+        <a class="btn btn-dark" href="https://github.com/collections/machine-learning" role="button" disabled>Collection: Getting started with machine learning</a>
+      </p>
     </div>
 
     <div class="container">
-
       <nav>
         <div class="nav nav-tabs nav-light" id="nav-tab" role="tablist">
           <a class="nav-item nav-link active" id="nav-intervals-tab" data-toggle="tab" href="#nav-intervals" role="tab" aria-controls="nav-intervals" aria-selected="true">Intervals</a>
           <a class="nav-item nav-link" id="nav-chord-tab" data-toggle="tab" href="#nav-chord" role="tab" aria-controls="nav-chord" aria-selected="false">Chord</a>
           <a class="nav-item nav-link" id="nav-scale-tab" data-toggle="tab" href="#nav-scale" role="tab" aria-controls="nav-scale" aria-selected="false">Scale</a>
+          <a class="nav-item nav-link" id="nav-form-tab" data-toggle="tab" href="#nav-form" role="tab" aria-controls="nav-form" aria-selected="false">Form</a>
         </div>
       </nav>
       <div class="tab-content" id="nav-tabContent">
@@ -558,6 +557,96 @@
             </tbody>
             <tfoot></tfoot>
           </table>
+        </div>
+        <div class="tab-pane fade" id="nav-form" role="tabpanel" aria-labelledby="nav-form-tab">
+          <br />
+          <div class="form-group row">
+              <label for="example-text-input" class="col-2 col-form-label">Attribute test</label>
+              <div class="col-10">
+                <input class="form-control" type="text" value="A disabled input" id="input-attribute-disabled" disabled>
+                <input class="form-control" type="text" value="A readonly input" id="input-attribute-readonly" readonly>
+                <input class="form-control" type="text" value="A required input" id="input-attribute-required" required>
+                <input class="form-control" type="checkbox" id="input-attribute-checked" checked>
+              </div>
+            </div>
+          <div class="form-group row">
+            <label for="example-text-input" class="col-2 col-form-label">Text</label>
+            <div class="col-10">
+              <input class="form-control" type="text" value="Artisanal kale" id="example-text-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-search-input" class="col-2 col-form-label">Search</label>
+            <div class="col-10">
+              <input class="form-control" type="search" value="How do I shoot web" id="example-search-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-email-input" class="col-2 col-form-label">Email</label>
+            <div class="col-10">
+              <input class="form-control" type="email" value="bootstrap@example.com" id="example-email-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-url-input" class="col-2 col-form-label">URL</label>
+            <div class="col-10">
+              <input class="form-control" type="url" value="https://getbootstrap.com" id="example-url-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-tel-input" class="col-2 col-form-label">Telephone</label>
+            <div class="col-10">
+              <input class="form-control" type="tel" value="1-(555)-555-5555" id="example-tel-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-password-input" class="col-2 col-form-label">Password</label>
+            <div class="col-10">
+              <input class="form-control" type="password" value="hunter2" id="example-password-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-number-input" class="col-2 col-form-label">Number</label>
+            <div class="col-10">
+              <input class="form-control" type="number" value="42" id="example-number-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-datetime-local-input" class="col-2 col-form-label">Date and time</label>
+            <div class="col-10">
+              <input class="form-control" type="datetime-local" value="2011-08-19T13:45:00" id="example-datetime-local-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-date-input" class="col-2 col-form-label">Date</label>
+            <div class="col-10">
+              <input class="form-control" type="date" value="2011-08-19" id="example-date-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-month-input" class="col-2 col-form-label">Month</label>
+            <div class="col-10">
+              <input class="form-control" type="month" value="2011-08" id="example-month-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-week-input" class="col-2 col-form-label">Week</label>
+            <div class="col-10">
+              <input class="form-control" type="week" value="2011-W33" id="example-week-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-time-input" class="col-2 col-form-label">Time</label>
+            <div class="col-10">
+              <input class="form-control" type="time" value="13:45:00" id="example-time-input">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-color-input" class="col-2 col-form-label">Color</label>
+            <div class="col-10">
+              <input class="form-control" type="color" value="#563d7c" id="example-color-input">
+            </div>
+          </div>
         </div>
       </div>
 
