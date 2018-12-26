@@ -329,7 +329,7 @@ public class WebElementServiceImpl implements WebElementService {
   public boolean isDisabled(WebElement element) {
     // This is a method not in the WebElement interface, so it is better to offer
     // something different rather than simply negates WebElement#isEnabled()
-    return !hasClass(element, "disabled") || !hasAttribute(element, "disabled");
+    return hasClass(element, "disabled") || hasAttribute(element, "disabled");
   }
 
   @Override

@@ -13,7 +13,10 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import com.google.common.base.Function;
 
 /**
  * WAUT
@@ -21,7 +24,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * @author ryan131
  * @since Oct 23, 2013, 6:09:52 PM
  */
-public class WAUT implements SearchContext {
+public class WAUT implements SearchContext, Wait<WebDriver> {
 
   private WebDriver driver;
   private WebDriverWait wait;
@@ -63,6 +66,11 @@ public class WAUT implements SearchContext {
   @Override
   public WebElement findElement(By by) {
     return driver.findElement(by);
+  }
+
+  @Override
+  public <T> T until(Function<? super WebDriver, T> isTrue) {
+    return wait.until(isTrue);
   }
 
   public void exit() {

@@ -159,7 +159,13 @@ public final class WebElementUtil {
     service.click(element);
   }
 
-  public void click(WebElement element, Clicker clicker) {
+  public static Until clickRepeatedly(WebElement element) {
+    Clicker clicker = Clicker.element();
+    service.click(element, clicker);
+    return new Until(element, clicker, context);
+  }
+
+  public static void click(WebElement element, Clicker clicker) {
     service.click(element, clicker);
   }
 
