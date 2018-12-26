@@ -91,31 +91,31 @@ public abstract class DijitDialog extends DijitPageObject {
   // Button
 
   public DijitButton button(String buttonText) {
-    return dijitButton(buttonText, false);
+    return dijit().Button(buttonText, false);
   }
 
   public boolean hasButton(String buttonText) {
     try {
-      return dijitButton(buttonText, false).isDisplayed();
+      return dijit().Button(buttonText, false).isDisplayed();
     } catch (NoSuchElementException nsee) {
       return false;
     }
   }
 
   public DijitButton OK() {
-    return dijitButton("OK", true);
+    return dijit().Button("OK", true);
   }
 
   public DijitButton Cancel() {
-    return dijitButton("Cancel", true);
+    return dijit().Button("Cancel", true);
   }
 
   public DijitButton Yes() {
-    return dijitButton("Yes", true);
+    return dijit().Button("Yes", true);
   }
 
   public DijitButton No() {
-    return dijitButton("No", true);
+    return dijit().Button("No", true);
   }
 
 }

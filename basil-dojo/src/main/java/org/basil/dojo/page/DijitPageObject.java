@@ -6,6 +6,7 @@ package org.basil.dojo.page;
 
 import org.basil.dojo.Dijit;
 import org.basil.dojo.widget.DijitButton;
+import org.basil.dojo.widget.DijitCalendar;
 import org.basil.selenium.page.PageObject;
 import org.basil.selenium.ui.Input;
 import org.openqa.selenium.By;
@@ -20,8 +21,7 @@ import org.openqa.selenium.WebElement;
  */
 public abstract class DijitPageObject extends PageObject {
 
-  private DijitWidget dijit;
-  private FormWidget widget;
+  private DijitWidget dijitWidget;
 
   // Constructor
 
@@ -50,31 +50,14 @@ public abstract class DijitPageObject extends PageObject {
     super(params);
   }
 
-  // Fast element locating methods
-
-  protected final WebElement div(String dojoAttachPoint) {
-    return findElement(Dijit.Div(dojoAttachPoint));
-  }
-
-  protected final DijitButton dijitButton(String text) {
-    return dijitButton(text, false);
-  }
-
-  protected final DijitButton dijitButton(String text, boolean closeParentOnClick) {
-    DijitButton button = new DijitButton(findElement(Dijit.Button(text)), closeParentOnClick);
-    button.setParent(this);
-    return button;
-  }
-
-  protected final WebElement dijitTab(String text) {
-    return findElement(Dijit.Tab(text));
-  }
-
+  /**
+   * Dijit widget factory
+   */
   protected DijitWidget dijit() {
-    if (dijit == null) {
-      dijit = new DijitWidget();
+    if (dijitWidget == null) {
+      dijitWidget = new DijitWidget();
     }
-    return dijit;
+    return dijitWidget;
   }
 
   public class DijitWidget {
@@ -85,9 +68,32 @@ public abstract class DijitPageObject extends PageObject {
       formWidget = new FormWidget();
     }
 
+    public DijitButton Button(String text) {
+      return Button(text, false);
+    }
+
+    public DijitButton Button(String text, boolean closeParentOnClick) {
+      DijitButton button = new DijitButton(findElement(Dijit.Button(text)), closeParentOnClick);
+      button.setParent(DijitPageObject.this);
+      return button;
+    }
+
+    public DijitCalendar Calendar(String rootXPath) {
+      return new DijitCalendar(findByXPath(rootXPath));
+    }
+
+    public WebElement div(String dojoAttachPoint) {
+      return DijitPageObject.this.findElement(Dijit.Div(dojoAttachPoint));
+    }
+
+    public WebElement Tab(String text) {
+      return DijitPageObject.this.findElement(Dijit.Tab(text));
+    }
+
     public FormWidget form() {
       return formWidget;
     }
+
   }
 
   public class FormWidget {
@@ -96,7 +102,7 @@ public abstract class DijitPageObject extends PageObject {
       return new Dijit.TextArea(DijitPageObject.this, rootXPath);
     }
 
-    public final Dijit.TextArea textarea(WebElement element) {
+    public final Dijit.TextArea Textarea(WebElement element) {
       return new Dijit.TextArea(Input.createTextarea(element));
     }
 
@@ -108,37 +114,38 @@ public abstract class DijitPageObject extends PageObject {
       return new Dijit.TextBox(Input.createTextBox(element));
     }
 
-    protected final Dijit.Spinner Spinner(String rootXPath) {
+    public final Dijit.Spinner Spinner(String rootXPath) {
       return new Dijit.Spinner(DijitPageObject.this, rootXPath);
     }
 
-    protected final Dijit.ComboBox ComboBox(String rootXPath) {
+    public final Dijit.ComboBox ComboBox(String rootXPath) {
       return new Dijit.ComboBox(DijitPageObject.this, rootXPath);
     }
 
-    protected final Dijit.DateTextBox DateTextBox(String rootXPath) {
+    public final Dijit.DateTextBox DateTextBox(String rootXPath) {
       return new Dijit.DateTextBox(DijitPageObject.this, rootXPath);
     }
 
-    protected final Dijit.CheckBox CheckBox(String rootXPath) {
+    public final Dijit.CheckBox CheckBox(String rootXPath) {
       return new Dijit.CheckBox(DijitPageObject.this, rootXPath);
     }
 
-    protected final Dijit.CheckBox CheckBox(WebElement element) {
+    public final Dijit.CheckBox CheckBox(WebElement element) {
       return new Dijit.CheckBox(Input.createCheckBox(element));
     }
 
-    protected final Dijit.Radio Radio(String rootXPath) {
+    public final Dijit.Radio Radio(String rootXPath) {
       return new Dijit.Radio(DijitPageObject.this, rootXPath);
     }
 
-    protected final Dijit.Radio Radio(WebElement element) {
+    public final Dijit.Radio Radio(WebElement element) {
       return new Dijit.Radio(Input.createRadioButton(element));
     }
 
-    protected final Dijit.Select dijitSelect(String rootXPath) {
+    public final Dijit.Select dijitSelect(String rootXPath) {
       return new Dijit.Select(DijitPageObject.this, rootXPath);
     }
+
   }
 
 }

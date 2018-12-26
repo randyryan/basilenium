@@ -33,6 +33,9 @@ import com.google.common.collect.Lists;
 /**
  * Dijit Utility
  *
+ * TODO Remove all static helper methods, then refactor this according to the structing in:
+ *      https://dojotoolkit.org/reference-guide/1.10/dijit/form.html
+ *
  * @author ryan131
  * @since May 27, 2016, 3:55:26 PM
  */
@@ -124,30 +127,6 @@ public abstract class Dijit extends BasilElement {
     return widget;
   }
 
-  public static boolean isWidgetRequired(WebElement widget) {
-    widget.clear();
-    widget.sendKeys(Keys.TAB);
-
-    String dijitValidationContainerXpath =
-        "//div[@id='widget_" + widget.getAttribute("id") + "']"
-        + "/div[contains(@class, 'dijitValidationContainer')]";
-
-    return getDriver().findElement(By.xpath(dijitValidationContainerXpath)).isDisplayed();
-  }
-
-  public static boolean isWidgetRequiredWithForcedFocusLeave(WebElement widget) {
-    widget.clear();
-
-    By labelXpath = By.cssSelector("label[for='" + widget.getAttribute("id") + "']");
-    getDriver().findElement(labelXpath).click();
-
-    String dijitValidationContainerXpath =
-        "//div[@id='widget_" + widget.getAttribute("id") + "']"
-        + "/div[contains(@class, 'dijitValidationContainer')]";
-
-    return getDriver().findElement(By.xpath(dijitValidationContainerXpath)).isDisplayed();
-  }
-
   public static void selectMenuItem(WebElement select, String item) {
     WebElement menu = ARIAs.getAriaOwnsWebElement(select);
     WebElement menuItem = new BaseLookup(menu).byClassAndText("dijitMenuItem", item);
@@ -167,18 +146,6 @@ public abstract class Dijit extends BasilElement {
     List<WebElement> menuItems = menu.findElements(By.className("dijitMenuItem"));
 
     getWait().until(ExpectedConditions.visibilityOf(menuItems.get(itemIndex))).click();
-  }
-
-  public static List<String> getMenuItems(WebElement select) {
-    WebElement menu = ARIAs.getAriaOwnsWebElement(select);
-
-    List<String> menuItems = Lists.newArrayList();
-    for (WebElement menuItem : menu.findElements(By.className("dijitMenuItem"))) {
-      menuItems.add(menuItem.getText());
-    }
-    select.click();
-
-    return menuItems;
   }
 
   public static String getSelectedMenuItem(WebElement select) {
@@ -239,93 +206,6 @@ public abstract class Dijit extends BasilElement {
       textBox.clear();
     }
     textBox.sendKeys(stringValue);
-  }
-
-  private static void selectCalendarMenuItem(WebElement monthButton, String month) {
-    String ariaOwns = ARIAs.getAriaOwnsWebELementId(monthButton, monthButton);
-    WebElement menu = getDriver().findElement(By.xpath("//*[@aria-label='" + ariaOwns+ "']"));
-
-    WebElement menuItem = new BaseLookup(menu).byClassAndText("dijitCalendarMonthLabel", month);
-    getWait().until(ExpectedConditions.visibilityOf(menuItem)).click();
-  }
-
-  public static void selectDijitCalendar(WebElement dijitCalendar, Calendar calendar) {
-    WebDriver driver = getDriver();
-    String dijitCalendarId = dijitCalendar.getAttribute("id");
-    String dijitCalendarXpath = "//table[@id='" + dijitCalendarId + "']";
-
-    // Select year
-
-    String previousYearXpath = dijitCalendarXpath + "//span[contains(@class, 'PreviousYear')]";
-    String currentYearXpath = dijitCalendarXpath + "//span[contains(@class, 'SelectedYear')]";
-    String nextYearXpath = dijitCalendarXpath + "//span[contains(@class, 'NextYear')]";
-
-    int selectedYear = Integer.parseInt(driver.findElement(By.xpath(currentYearXpath)).getText());
-    int targetYear = calendar.get(Calendar.YEAR);
-
-    if (selectedYear != targetYear) {
-      String previousOrNext = selectedYear > targetYear ? previousYearXpath : nextYearXpath;
-      while (selectedYear != targetYear) {
-        driver.findElement(By.xpath(previousOrNext)).click();
-        try { Thread.sleep(100); } catch (InterruptedException ie) {}
-          selectedYear = Integer.parseInt(driver.findElement(By.xpath(currentYearXpath)).getText());
-        }
-      }
-
-      // Select month
-
-      String monthButtonXpath =
-          dijitCalendarXpath + "/thead//span[contains(@class, 'dijitDownArrowButton')]";
-
-      String monthToSelect = null;
-      switch (calendar.get(Calendar.MONTH)) {
-      case Calendar.JANUARY:
-          monthToSelect = "January";
-          break;
-      case Calendar.FEBRUARY:
-          monthToSelect = "Febuary";
-          break;
-      case Calendar.MARCH:
-          monthToSelect = "March";
-          break;
-      case Calendar.APRIL:
-          monthToSelect = "April";
-          break;
-      case Calendar.MAY:
-          monthToSelect = "May";
-          break;
-      case Calendar.JUNE:
-          monthToSelect = "June";
-          break;
-      case Calendar.JULY:
-          monthToSelect = "July";
-          break;
-      case Calendar.AUGUST:
-          monthToSelect = "August";
-          break;
-      case Calendar.SEPTEMBER:
-          monthToSelect = "September";
-          break;
-      case Calendar.OCTOBER:
-          monthToSelect = "October";
-          break;
-      case Calendar.NOVEMBER:
-          monthToSelect = "November";
-          break;
-      case Calendar.DECEMBER:
-          monthToSelect = "December";
-          break;
-      }
-
-      WebElement monthButton = driver.findElement(By.xpath(monthButtonXpath));
-      selectCalendarMenuItem(monthButton, monthToSelect);
-
-      // Select day
-
-      int day = calendar.get(Calendar.DAY_OF_MONTH);
-      String dayXpath = dijitCalendarXpath + 
-          "/tbody//span[text()='" + day + "']/parent::td[contains(@class, 'CurrentMonth')]";
-      driver.findElement(By.xpath(dayXpath)).click();
   }
 
   // Dijit
