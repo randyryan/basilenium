@@ -19,6 +19,7 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,10 +160,15 @@ public final class WebElementUtil {
     service.click(element);
   }
 
-  public static Until clickRepeatedly(WebElement element) {
+  public static Until clickRepeatedly(final WebElement element) {
     Clicker clicker = Clicker.element();
     service.click(element, clicker);
-    return new Until(element, clicker, context);
+    return new Until(new Action() {
+      @Override
+      public void perform() {
+        clicker.click(element);
+      }
+    }, context);
   }
 
   public static void click(WebElement element, Clicker clicker) {
