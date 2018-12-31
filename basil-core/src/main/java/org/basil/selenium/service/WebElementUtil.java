@@ -229,6 +229,36 @@ public final class WebElementUtil {
     service.unselectElements(elements);
   }
 
+  // Make:
+  //   WebDriverUtil.executeScript(String script, Object... args);
+  //   WebDriverUtil.executeScript(WebDriver driver, String script, Object... args);
+  // Call:
+  //   WebDriverUtil.executeScript("arguments[0].focus()", element);
+
+  public static void focus(WebElement element) {
+    focus(element, (JavascriptExecutor) context);
+  }
+
+  public static void focus(WebElement element, JavascriptExecutor executor) {
+    executor.executeScript("arguments[0].focus()", element);
+  }
+
+  public static void blur(WebElement element) {
+    blur(element, (JavascriptExecutor) context);
+  }
+
+  public static void blur(WebElement element, JavascriptExecutor executor) {
+    executor.executeScript("arguments[0].blur()", element);
+  }
+
+  public static void scrollIntoView(WebElement element) {
+    scrollIntoView(element, (JavascriptExecutor) context);
+  }
+
+  public static void scrollIntoView(WebElement element, JavascriptExecutor executor) {
+    executor.executeScript("arguments[0].scrollIntoView()", element);
+  }
+
   public static void submit(WebElement element) {
     service.submit(element);
   }

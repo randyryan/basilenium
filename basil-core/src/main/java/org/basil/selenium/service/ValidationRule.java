@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2018 Ryan Li Wan. All rights reserved.
+ * Copyright (c) 2013-2018 Ryan Li Wan. All rights reserved.
  */
 
 package org.basil.selenium.service;

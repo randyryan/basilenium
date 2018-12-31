@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-2016 Ryan Li Wan. All rights reserved.
+ * Copyright (c) 2013-2018 Ryan Li Wan. All rights reserved.
  */
 
 package org.basil.selenium.service;
@@ -53,7 +53,7 @@ public class ClickerTest {
   }
 
   @Test(expected=IllegalArgumentException.class)
-  public void untilShouldUseInputCompatibleWithCondition() {
+  public void untilShouldUseConditionCompatibleInput() {
     WebElement formTab = waut.findElement(By.id("nav-form-tab"));
     WebElementUtil.clickRepeatedly(formTab).times(8).every(125).until(
         ExpectedConditions.visibilityOfElementLocated(By.id("nav-form")), null);
