@@ -10,7 +10,6 @@ import java.util.List;
 import org.basil.dojo.widget.DijitCalendar;
 import org.basil.dojo.widget.DijitMenu;
 import org.basil.selenium.BasilElement;
-import org.basil.selenium.BasilException;
 import org.basil.selenium.base.DriverFactory;
 import org.basil.selenium.page.BaseLookup;
 import org.basil.selenium.service.WebElementService;
@@ -28,7 +27,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.spearmint.util.Sleeper;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 /**
  * Dijit Utility
@@ -125,87 +123,6 @@ public abstract class Dijit extends BasilElement {
     }
 
     return widget;
-  }
-
-  public static void selectMenuItem(WebElement select, String item) {
-    WebElement menu = ARIAs.getAriaOwnsWebElement(select);
-    WebElement menuItem = new BaseLookup(menu).byClassAndText("dijitMenuItem", item);
-
-    getWait().until(ExpectedConditions.visibilityOf(menuItem)).click();
-  }
-
-  public static void selectMenuItem(WebElement select, WebElement ariaOwns, String item) {
-    WebElement menu = ARIAs.getAriaOwnsWebElement(ariaOwns, select);
-    WebElement menuItem = new BaseLookup(menu).byClassAndText("dijitMenuItem", item);
-
-    getWait().until(ExpectedConditions.visibilityOf(menuItem)).click();
-  }
-
-  public static void selectMenuItem(WebElement select, int itemIndex) {
-    WebElement menu = ARIAs.getAriaOwnsWebElement(select);
-    List<WebElement> menuItems = menu.findElements(By.className("dijitMenuItem"));
-
-    getWait().until(ExpectedConditions.visibilityOf(menuItems.get(itemIndex))).click();
-  }
-
-  public static String getSelectedMenuItem(WebElement select) {
-    return select.findElement(By.tagName("td")).getText();
-  }
-
-  public static void selectComboBoxMenuItem(WebElement comboBox, String item) {
-    comboBox.findElement(By.xpath("//div[input[@value='▼ ']]")).click();
-    WebElement menu = ARIAs.getAriaOwnsWebElement(comboBox);
-    WebElement menuItem = menu.findElement(
-        By.xpath("//div[contains(@class, 'dijitMenuItem')][text()='" + item + "']"));
-    getWait().until(ExpectedConditions.visibilityOf(menuItem)).click();
-  }
-
-  // Spinner
-
-  public static void setSpinnerValue(WebElement spinner, double targetValue) {
-    try {
-      WebElementUtil.validateTagAndClass(spinner, "div", "dijitSpinner");
-    } catch (BasilException.InvalidElement notWidgetWrapper) {
-      spinner = getWrapperAgnostic(spinner);
-    }
-
-    // Get initial value
-
-    WebElement textBox = spinner.findElement(
-        By.cssSelector("input[role='spinbutton']"));
-    double initialValue = WebElementUtil.getValue(textBox).toDouble();
-
-    // Get up arrow and down arrow
-  
-    WebElement upArrow = spinner.findElement(
-        By.cssSelector("div[class*='dijitUpArrowButton']"));
-    WebElement downArrow = spinner.findElement(
-        By.cssSelector("div[class*='dijitDownArrowButton']"));
-
-    // Set the current value to target value
-
-    WebElement upOrDown = initialValue < targetValue ? upArrow : downArrow;
-
-    while (WebElementUtil.getValue(textBox).toDouble() != targetValue) {
-        WebElementUtil.clickButton(upOrDown);
-      try { Thread.sleep(50); }
-      catch (InterruptedException ignored) {}
-    }
-  }
-
-  public static void inputSpinnerValue(WebElement spinner, String stringValue) {
-    try {
-        WebElementUtil.validateTagAndClass(spinner, "div", "dijitSpinner");
-    } catch (BasilException.InvalidElement notWidgetWrapper) {
-      spinner = getWrapperAgnostic(spinner);
-    }
-
-    WebElement textBox = spinner.findElement(
-        By.cssSelector("input[role='spinbutton']"));
-    if (!textBox.getAttribute("value").trim().equals("")) {
-      textBox.clear();
-    }
-    textBox.sendKeys(stringValue);
   }
 
   // Dijit
@@ -644,9 +561,19 @@ public abstract class Dijit extends BasilElement {
 
     protected DijitMenu dijitMenu() {
       if (dijitMenu == null) {
-        dijitDownArrowButton().click(); // TODO Update the way to click and wait for the attribute
-        String dijitMenuId = getAttribute("aria-owns");
-//        String dijitMenuId = Pessimistically.clickGetAttribute(this, dijitDownArrowButton(), "aria-owns");
+//        dijitDownArrowButton().click(); // TODO Update the way to click and wait for the attribute
+//        String dijitMenuId = getAttribute("aria-owns");
+        String dijitMenuId = Pessimistically.clickGetAttribute(this, dijitDownArrowButton(), "aria-owns");
+        // Should return dijitComboBoxMenu, different
+        // See https://dojotoolkit.org/reference-guide/1.10/dijit/form/ComboBox.html
+        // <div class="dijitReset dijitMenu dijitComboBoxMenu" widgetid="xxx">
+        //   <div class="dijitMenuItem dijitMenuPreviousButton" data-dojo-attach-point="previousButton" role="option" id="uniqName_32_47_combo_popup_prev" style="display: none;">Previous choices</div>
+        //   <div class="dijitReset dijitMenuItem" role="option" item="0" id="uniqName_32_47_combo_popup0">&nbsp;</div>
+        //   <div class="dijitReset dijitMenuItem" role="option" item="1" id="uniqName_32_47_combo_popup1">ASCII</div>
+        //   <div class="dijitReset dijitMenuItem" role="option" item="2" id="uniqName_32_47_combo_popup2">EBCDIC</div>
+        //   <div class="dijitReset dijitMenuItem" role="option" item="3" id="uniqName_32_47_combo_popup3">UNICODE</div>
+        //   <div class="dijitMenuItem dijitMenuNextButton" data-dojo-attach-point="nextButton" role="option" id="uniqName_32_47_combo_popup_next" style="display: none;">More choices</div>
+        // </div>
         dijitMenu = new DijitMenu(getDriver(), By.id(dijitMenuId));
       }
       return dijitMenu;
@@ -720,7 +647,7 @@ public abstract class Dijit extends BasilElement {
    * @author ryan131
    * @since Sep 27, 2015, 5:40:32 PM
    */
-  public static class CheckBox extends Widget<Input.CheckBox> {
+  public static class CheckBox extends InputWidget<Input.CheckBox> {
 
     // Constructor
 
@@ -835,6 +762,31 @@ public abstract class Dijit extends BasilElement {
   }
 
   public static class Select extends Widget<org.basil.selenium.ui.Widget> {
+
+    public static void selectItem(WebElement select, String item) {
+      WebElement menu = ARIAs.getAriaOwnsWebElement(select);
+      WebElement menuItem = new BaseLookup(menu).byClassAndText("dijitMenuItem", item);
+
+      getWait().until(ExpectedConditions.visibilityOf(menuItem)).click();
+    }
+
+    public static void selectItem(WebElement select, WebElement ariaOwns, String item) {
+      WebElement menu = ARIAs.getAriaOwnsWebElement(ariaOwns, select);
+      WebElement menuItem = new BaseLookup(menu).byClassAndText("dijitMenuItem", item);
+
+      getWait().until(ExpectedConditions.visibilityOf(menuItem)).click();
+    }
+
+    public static void selectItem(WebElement select, int itemIndex) {
+      WebElement menu = ARIAs.getAriaOwnsWebElement(select);
+      List<WebElement> menuItems = menu.findElements(By.className("dijitMenuItem"));
+
+      getWait().until(ExpectedConditions.visibilityOf(menuItems.get(itemIndex))).click();
+    }
+
+    public static String getSelectedItem(WebElement select) {
+      return select.findElement(By.tagName("td")).getText();
+    }
 
     // WebElements
 

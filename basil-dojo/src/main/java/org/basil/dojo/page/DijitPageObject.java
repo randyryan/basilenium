@@ -102,12 +102,20 @@ public abstract class DijitPageObject extends PageObject {
       return new Dijit.TextArea(DijitPageObject.this, rootXPath);
     }
 
+    public final Dijit.TextArea Textarea(By locator) {
+      return new Dijit.TextArea(DijitPageObject.this, locator);
+    }
+
     public final Dijit.TextArea Textarea(WebElement element) {
       return new Dijit.TextArea(Input.createTextarea(element));
     }
 
     public final Dijit.TextBox TextBox(String rootXPath) {
       return new Dijit.TextBox(DijitPageObject.this, rootXPath);
+    }
+
+    public final Dijit.TextBox TextBox(By locator) {
+      return new Dijit.TextBox(DijitPageObject.this, locator);
     }
 
     public final Dijit.TextBox TextBox(WebElement element) {
@@ -118,16 +126,32 @@ public abstract class DijitPageObject extends PageObject {
       return new Dijit.Spinner(DijitPageObject.this, rootXPath);
     }
 
+    public final Dijit.Spinner Spinner(By locator) {
+      return new Dijit.Spinner(DijitPageObject.this, locator);
+    }
+
     public final Dijit.ComboBox ComboBox(String rootXPath) {
       return new Dijit.ComboBox(DijitPageObject.this, rootXPath);
+    }
+
+    public final Dijit.ComboBox ComboBox(By locator) {
+      return new Dijit.ComboBox(DijitPageObject.this, locator);
     }
 
     public final Dijit.DateTextBox DateTextBox(String rootXPath) {
       return new Dijit.DateTextBox(DijitPageObject.this, rootXPath);
     }
 
+    public final Dijit.DateTextBox DateTextBox(By locator) {
+      return new Dijit.DateTextBox(DijitPageObject.this, locator);
+    }
+
     public final Dijit.CheckBox CheckBox(String rootXPath) {
       return new Dijit.CheckBox(DijitPageObject.this, rootXPath);
+    }
+
+    public final Dijit.CheckBox CheckBox(By locator) {
+      return new Dijit.CheckBox(DijitPageObject.this, locator);
     }
 
     public final Dijit.CheckBox CheckBox(WebElement element) {
@@ -138,12 +162,24 @@ public abstract class DijitPageObject extends PageObject {
       return new Dijit.Radio(DijitPageObject.this, rootXPath);
     }
 
+    public final Dijit.Radio Radio(By locator) {
+      return new Dijit.Radio(DijitPageObject.this, locator);
+    }
+
     public final Dijit.Radio Radio(WebElement element) {
       return new Dijit.Radio(Input.createRadioButton(element));
     }
 
-    public final Dijit.Select dijitSelect(String rootXPath) {
+    public final Dijit.Select Select(String rootXPath) {
       return new Dijit.Select(DijitPageObject.this, rootXPath);
+    }
+
+    public final Dijit.Select Select(By locator) {
+      return new Dijit.Select(DijitPageObject.this, locator);
+    }
+
+    public final Dijit.Select Select(WebElement element) {
+      return new Dijit.Select(element);
     }
 
   }
