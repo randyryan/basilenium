@@ -6,6 +6,7 @@ package org.basil.selenium.service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Set;
 
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.TimeoutException;
@@ -17,16 +18,19 @@ import org.spearmint.util.Sleeper;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
 
 /**
- * Until - a customized Wait
+ * Repeater - A highly customized {@link org.openqa.selenium.support.ui.FluentWait} more focused on
+ *            repeatedly performing {@link org.openqa.selenium.interactions.Action}.
  *
  * @author ryan131
  * @since Dec 25, 2018, 5:13:38 PM
  */
-public class Until {
+public class Repeater {
 
-  private static final Logger logger = LoggerFactory.getLogger(Until.class);
+  private static final Logger logger = LoggerFactory.getLogger(Repeater.class);
 
   private final Action action;
   private SearchContext context;
@@ -35,41 +39,58 @@ public class Until {
   private Duration timeout;
   private Duration interval;
 
-  public Until(Action action) {
+  private Set<Class<? extends Throwable>> ignoredExceptions = Sets.newHashSet();
+
+  public Repeater(Action action) {
     this(action, null);
   }
 
-  public Until(Action action, SearchContext context) {
+  public Repeater(Action action, SearchContext context) {
     this.context = context;
     this.action = action;
   }
 
-  public Until times(int times) {
+  public Repeater times(int times) {
     Preconditions.checkArgument(times > 0);
     this.times = times;
     return this;
   }
 
-  public Until every(long millis) {
+  public Repeater every(long millis) {
     Preconditions.checkArgument(millis > 0);
     this.interval = Duration.ofMillis(millis);
     return this;
   }
 
-  public Until every(Duration interval) {
+  public Repeater every(Duration interval) {
     this.interval = interval;
     return this;
   }
 
-  public Until timeout(long millis) {
+  public Repeater timeout(long millis) {
     Preconditions.checkArgument(millis > 0);
     this.timeout = Duration.ofMillis(millis);
     return this;
   }
 
-  public Until timeout(Duration timeout) {
+  public Repeater timeout(Duration timeout) {
     this.timeout = timeout;
     return this;
+  }
+
+  public Repeater ignore(Class<? extends Throwable> ignoredException) {
+    ignoredExceptions.add(ignoredException);
+    return this;
+  }
+
+  private Throwable propagateIfUnignored(Throwable throwable) {
+    for (Class<? extends Throwable> ignoredException : ignoredExceptions) {
+      if (ignoredException.isInstance(throwable)) {
+        return throwable;
+      }
+    }
+    Throwables.throwIfUnchecked(throwable);
+    throw new RuntimeException(throwable);
   }
 
   @SuppressWarnings("unchecked")
@@ -87,37 +108,38 @@ public class Until {
 
   public <S extends SearchContext, V> V until(Function<S, V> condition, S input) {
     Scheduler scheduler = new Scheduler();
-    // clicker.click(element); Moved to the bottom
+    Throwable lastException = null;
     while (true) {
-      V value = null;
       try {
-        value = condition.apply(input);
-      } catch (NullPointerException npe) {
-        throw new IllegalArgumentException(String.format(
-            "The input %s cannot be used with condition %s, specify a condition does not use " +
-            "this input or specify a valid input for this condition",
-            input, condition));
-      }
-      if (value instanceof Boolean) {
-        if (value.equals(Boolean.TRUE)) {
+        V value = condition.apply(input);
+        if (value instanceof Boolean) {
+          if (value.equals(Boolean.TRUE)) {
+            return value;
+          }
+        } else if (value != null) {
           return value;
         }
-      } else if (value != null) {
-        return value;
+
+        lastException = null;
+      } catch (Throwable throwable) {
+        if (input == null && NullPointerException.class.isInstance(throwable)) {
+          throw new IllegalArgumentException(String.format(
+              "The input %s cannot be used with condition %s, Please specify a condition does not " +
+              "use input or specify a valid input for this condition.", input, condition));
+        }
+        lastException = propagateIfUnignored(throwable);
       }
-      Sleeper.sleepSilently(interval);
-      action.perform(); // The action should be performed after applying the condition because
-      // there is already a clicking happened before the creation of the Until, at the
-      // WebElementUtil.clickRepeatedly(); Placing it at the head will very likely to result
-      // a double click.
 
       try {
         scheduler.interruptIfTimesOut();
       } catch (InterruptedException ie) {
         break;
       }
+
+      Sleeper.sleepSilently(interval); // The action should be performed in the end because
+      action.perform(); // it has already performed once before the creation of this Repeater.
     }
-    throw new TimeoutException();
+    throw new TimeoutException(lastException);
   }
 
   public class Scheduler {
@@ -147,7 +169,9 @@ public class Until {
           (count != null && count.isOnTarget())) {
         throw new InterruptedException();
       } else {
-        count.count();
+        if (count != null) {
+          count.count();
+        }
       }
     }
 

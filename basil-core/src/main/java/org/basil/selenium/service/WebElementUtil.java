@@ -160,10 +160,10 @@ public final class WebElementUtil {
     service.click(element);
   }
 
-  public static Until clickRepeatedly(final WebElement element) {
+  public static Repeater clickRepeatedly(final WebElement element) {
     Clicker clicker = Clicker.element();
     service.click(element, clicker);
-    return new Until(new Action() {
+    return new Repeater(new Action() {
       @Override
       public void perform() {
         clicker.click(element);
