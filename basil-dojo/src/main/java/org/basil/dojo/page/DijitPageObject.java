@@ -7,6 +7,7 @@ package org.basil.dojo.page;
 import org.basil.dojo.Dijit;
 import org.basil.dojo.widget.DijitButton;
 import org.basil.dojo.widget.DijitCalendar;
+import org.basil.dojo.widget.DijitTab;
 import org.basil.selenium.page.PageObject;
 import org.basil.selenium.ui.Input;
 import org.openqa.selenium.By;
@@ -86,8 +87,8 @@ public abstract class DijitPageObject extends PageObject {
       return DijitPageObject.this.findElement(Dijit.Div(dojoAttachPoint));
     }
 
-    public WebElement Tab(String text) {
-      return DijitPageObject.this.findElement(Dijit.Tab(text));
+    public DijitTab Tab(String text) {
+      return new DijitTab(DijitPageObject.this, text);
     }
 
     public FormWidget form() {

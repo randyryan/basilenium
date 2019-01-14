@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.basil.dojo.widget.DijitCalendar;
+import org.basil.dojo.widget.DijitComboBoxMenu;
 import org.basil.dojo.widget.DijitMenu;
 import org.basil.selenium.BasilElement;
 import org.basil.selenium.base.DriverFactory;
@@ -354,15 +355,39 @@ public abstract class Dijit extends BasilElement {
     // Methods
 
     public void input(String value) {
-      getWidget().input(value);
+      // Workaround for dropping letters
+      boolean hasDroppingLetter = false;
+      int retryTimes = 5;
+      do {
+        getWidget().clear();
+        getWidget().input(value);
+        Sleeper.sleep_50_ms();
+        if (!getValue().toString().equals(value)) {
+          hasDroppingLetter = true;
+          System.err.println("[Dijit.TextInput.input] dropping letter detected.");
+        } else {
+          return;
+        }
+        retryTimes--;
+        if (retryTimes == 0) {
+          System.err.println("[Dijit.TextInput.input] tried correcting dropping letters.");
+          break;
+        }
+      } while (hasDroppingLetter);
     }
 
     public void input(long value) {
+      getWidget().clear();
       getWidget().input(value);
     }
 
     public void input(double value) {
+      getWidget().clear();
       getWidget().input(value);
+    }
+
+    public void enter() {
+      getWidget().sendKeys(Keys.ENTER);
     }
 
     public WebElementService.ValueConverter getValue() {
@@ -530,7 +555,7 @@ public abstract class Dijit extends BasilElement {
     // WebElements
 
     protected WebElement dijitDownArrowButton;
-    protected DijitMenu dijitMenu;
+    protected DijitComboBoxMenu dijitComboBoxMenu;
 
     // Constructor
 
@@ -559,32 +584,25 @@ public abstract class Dijit extends BasilElement {
       return dijitDownArrowButton;
     }
 
-    protected DijitMenu dijitMenu() {
-      if (dijitMenu == null) {
-//        dijitDownArrowButton().click(); // TODO Update the way to click and wait for the attribute
-//        String dijitMenuId = getAttribute("aria-owns");
-        String dijitMenuId = Pessimistically.clickGetAttribute(this, dijitDownArrowButton(), "aria-owns");
-        // Should return dijitComboBoxMenu, different
-        // See https://dojotoolkit.org/reference-guide/1.10/dijit/form/ComboBox.html
-        // <div class="dijitReset dijitMenu dijitComboBoxMenu" widgetid="xxx">
-        //   <div class="dijitMenuItem dijitMenuPreviousButton" data-dojo-attach-point="previousButton" role="option" id="uniqName_32_47_combo_popup_prev" style="display: none;">Previous choices</div>
-        //   <div class="dijitReset dijitMenuItem" role="option" item="0" id="uniqName_32_47_combo_popup0">&nbsp;</div>
-        //   <div class="dijitReset dijitMenuItem" role="option" item="1" id="uniqName_32_47_combo_popup1">ASCII</div>
-        //   <div class="dijitReset dijitMenuItem" role="option" item="2" id="uniqName_32_47_combo_popup2">EBCDIC</div>
-        //   <div class="dijitReset dijitMenuItem" role="option" item="3" id="uniqName_32_47_combo_popup3">UNICODE</div>
-        //   <div class="dijitMenuItem dijitMenuNextButton" data-dojo-attach-point="nextButton" role="option" id="uniqName_32_47_combo_popup_next" style="display: none;">More choices</div>
-        // </div>
-        dijitMenu = new DijitMenu(getDriver(), By.id(dijitMenuId));
+    protected DijitComboBoxMenu dijitComboBoxMenu() {
+      if (dijitComboBoxMenu == null) {
+        String dijitMenuId = Pessimistically.clickGetAttribute(
+            this, dijitDownArrowButton(), "aria-owns");
+        dijitComboBoxMenu = new DijitComboBoxMenu(getDriver(), dijitMenuId);
       }
-      return dijitMenu;
+      while (!dijitComboBoxMenu.isDisplayed()) {
+        dijitDownArrowButton().click();
+        Sleeper.sleep_250_ms();
+      }
+      return dijitComboBoxMenu;
     }
 
     public void selectItem(String name) {
-      dijitMenu().selectItem(name);
+      dijitComboBoxMenu().selectItem(name);
     }
 
     public void selectItem(org.basil.selenium.ui.Select.Option option) {
-      dijitMenu().selectItem(option.value());
+      dijitComboBoxMenu().selectItem(option.value());
     }
 
     public String getSelectedItem() {
@@ -824,6 +842,9 @@ public abstract class Dijit extends BasilElement {
       if (dijitMenu == null) {
         String dijitMenuId = Pessimistically.clickGetAttribute(this, "aria-owns");
         dijitMenu = new DijitMenu(getDriver(), By.id(dijitMenuId));
+      }
+      if (!dijitMenu.isDisplayed()) {
+        dijitDownArrowButton().click();
       }
       return dijitMenu;
     }

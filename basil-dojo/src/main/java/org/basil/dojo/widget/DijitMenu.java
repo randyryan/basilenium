@@ -4,14 +4,10 @@
 
 package org.basil.dojo.widget;
 
-import java.util.Map;
-
 import org.basil.dojo.Dijit;
 import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
-
-import com.google.common.collect.Maps;
 
 /**
  * DijitMenu
@@ -20,8 +16,6 @@ import com.google.common.collect.Maps;
  * @since Sep 28, 2017, 5:47:14 PM
  */
 public class DijitMenu extends Dijit {
-
-  private Map<String, WebElement> menuItems = Maps.newHashMap();
 
   // Constructor
 
@@ -44,10 +38,7 @@ public class DijitMenu extends Dijit {
   }
 
   public void selectItem(String name) {
-    findByXPath(
-        "//tr[contains(@class, 'dijitMenuItem')]" +
-        "[td[contains(@class, 'dijitMenuItemLabel') and text()='" + name + "']]"
-    ).click();
+    findByXPath("tr[normalize-space(@aria-label)='" + name + "']").click();
   }
 
   public String getSelectedItem() {
