@@ -21,7 +21,11 @@ public class DijitTab extends Dijit {
   // Constructor
 
   public DijitTab(SearchContext context, String text) {
-    super(context, By.xpath(
+    this(context, "", text);
+  }
+
+  public DijitTab(SearchContext context, String rootXPath, String text) {
+    super(context, By.xpath(rootXPath +
         "//*[contains(@class, 'dijitTab') and @widgetid]" +
         "[span[@class='tabLabel'][text()='" + text + "']]"));
   }
