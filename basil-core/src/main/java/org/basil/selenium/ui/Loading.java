@@ -94,14 +94,14 @@ public class Loading {
         throw new NoSuchElementException("The loading is unavailable.");
       }
     }
-    if (status.isIdle()) {
-      return loading;
-    }
     // status.isInProgress
     if (seconds > 0) {
       try {
         Thread.sleep(seconds * 1000);
       } catch (InterruptedException ie) {}
+    }
+    if (status.isIdle()) {
+      return loading;
     }
     return waitUntilFinish();
   }

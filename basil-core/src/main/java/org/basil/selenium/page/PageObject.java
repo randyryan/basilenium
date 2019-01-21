@@ -75,6 +75,12 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
     this.timer = new Timer(getClass());
     this.lookup = ElementLookup.create(this, wait);
 
+    if (context instanceof BasilContext) {
+      if (!((BasilContext) context).resolve().isResolved()) {
+        throw new IllegalArgumentException(
+            "The parent context \"" + context.getClass() + "\" is not initialized.");
+      }
+    }
     construct(context, locator);
   }
 
@@ -157,6 +163,11 @@ public abstract class PageObject extends PageObjectAnnotation implements SearchC
         pageObject = lookup.getVisibleElement(getLocator());
       }
       if (locator.hasXPath() && !parent.isWebDriver()) {
+        try {
+          parent.getConfidentLocator();
+        } catch (IllegalArgumentException iae) {
+          System.err.println("Parent: \"" + parent + "\" is not BasilElement.");
+        }
         if (locator.equals(parent.getLocator()) || locator.equals(parent.getConfidentLocator())) {
           // My locator's should not be the same as my parent's locator
           logger.error("The locator \"" + locator + "\" is conflict with it's parent's locator.");

@@ -29,4 +29,16 @@ public interface DijitCondition<V> extends Function<SearchContext, V> {
     };
   }
 
+  public static DijitCondition<Boolean> textToBe(final Dijit.TextInput<?> textInput, final String text) {
+    return new DijitCondition<Boolean>() {
+      @Override
+      public Boolean apply(SearchContext input) {
+        if (textInput.getValue().toString().equals(text)) {
+          return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+      }
+    };
+  }
+
 }

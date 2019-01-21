@@ -6,6 +6,7 @@ package org.basil.dojo.widget;
 
 import org.basil.dojo.Dijit;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
@@ -38,7 +39,11 @@ public class DijitMenu extends Dijit {
   }
 
   public void selectItem(String name) {
-    findByXPath("tr[normalize-space(@aria-label)='" + name + "']").click();
+    try {
+      findByXPath("tr[normalize-space(@aria-label)='" + name + "']").click();
+    } catch (NoSuchElementException nsee) {
+      throw new IllegalArgumentException("The menu item \"" + name + "\" does not exists.", nsee);
+    }
   }
 
   public String getSelectedItem() {

@@ -346,6 +346,14 @@ public final class WebElementUtil {
     return service.getInnerHTML(element);
   }
 
+  public static List<String> getInnerHTML(List<WebElement> elements) {
+    List<String> innerHTMLs = Lists.newArrayListWithCapacity(elements.size());
+    for (WebElement element : elements) {
+      innerHTMLs.add(getInnerHTML(element));
+    }
+    return innerHTMLs;
+  }
+
   public static String getOuterHTML(WebElement element) {
     return service.getOuterHTML(element);
   }
